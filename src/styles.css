@@ -8,15 +8,15 @@
   --font-color: #191c1e;
   --btn-gradient-color: linear-gradient(135deg, #003ec7 0%, #6b38d4 100%);
 
-  --primary-color: #003EC7;
-  --secondary-color:#6b38d4;
-  --tertiary-color: #006f89;
+  /* --primary-color: #003EC7; */
+  /* --secondary-color:#6b38d4; */
+  /* --tertiary-color: #006f89; */
   --success-color: #DCFCE7;
 
-  --text-dark-color: #191c1e;
+  /* --text-dark-color: #191c1e;
   --text-mute-color: #434656;
   --text-white-color: #ffffff;
-  --text-error-color: #ba1a1a;
+  --text-error-color: #ba1a1a; */
 
 
   --error-container-color: #ffdad6;
@@ -24,8 +24,8 @@
 
 
   /*GLOBAL ADMIN FONT*/
-  --font-heading: 'Montserrat', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  /* --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif; */
 
    /* BORDER RADIUS */
   --radius-sm: 0.75rem;
@@ -60,3 +60,34 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   letter-spacing: -0.02em;
 }
+
+
+
+ .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .bg-mesh {
+      background-color: #f7f9fb;
+      background-image:
+        radial-gradient(at 0% 0%, hsla(220, 100%, 95%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(260, 100%, 95%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(220, 100%, 95%, 1) 0, transparent 50%),
+        radial-gradient(at 0% 100%, hsla(260, 100%, 95%, 1) 0, transparent 50%);
+    }
+
+    .sunken-input {
+      box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+    }
+
+    .btn-primary-gradient {
+      background: linear-gradient(135deg, #003ec7 0%, #6b38d4 100%);
+      box-shadow: 0 4px 15px -3px rgba(0, 62, 199, 0.3);
+    }
+
+    .btn-primary-gradient:hover {
+      box-shadow: 0 8px 25px -5px rgba(0, 62, 199, 0.4);
+    }

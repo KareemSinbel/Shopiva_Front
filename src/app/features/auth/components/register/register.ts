@@ -48,8 +48,10 @@ export class Register {
 
           localStorage.setItem('token', JSON.stringify(response.token));
           localStorage.setItem("refreshToken", JSON.stringify(response.refreshToken));
+          this._authService.setEmail(this.registerForm.value.email);
+          this._authService.setOtpFlow('confirm-email');
 
-          this._router.navigate(['/login']);
+          this._router.navigate(['/otp-confirmation']);
 
 
         },

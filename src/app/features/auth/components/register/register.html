@@ -1,5 +1,4 @@
-<main
-  class="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-5 relative overflow-hidden">
+<main class="grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-5 relative overflow-hidden">
   <div class="w-full max-w-xl z-10">
 
     <div class="glass-card rounded-xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/20">
@@ -64,8 +63,7 @@
           <div>
             <div class="flex justify-between mb-2">
               <label class="block font-label-md text-label-md text-on-surface-variant">Password</label>
-              <a class="font-label-sm text-label-sm text-primary hover:text-secondary transition-colors" href="#">Forgot
-                Password?</a>
+
             </div>
             <input formControlName="password"
               class="sunken-input w-full px-4 py-3.5 rounded-lg bg-white/50 border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
@@ -105,10 +103,10 @@
           </button>
           @if(errorMessage()){
 
-        <div class="  text-red-500 text-sm">
-          {{ errorMessage() }}
-        </div>
-        }
+          <div class="  text-red-500 text-sm">
+            {{ errorMessage() }}
+          </div>
+          }
         </form>
 
       </div>

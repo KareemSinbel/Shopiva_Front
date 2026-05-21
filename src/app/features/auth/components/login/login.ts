@@ -1,6 +1,5 @@
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
 import { AuthService } from '../../../../core/services/auth-service';
 import { NgClass } from '@angular/common';
 import { RouterLink } from "@angular/router";
@@ -35,7 +34,7 @@ export class Login {
       this._authService.login(this.loginForm.value).subscribe({
         next: (response) => {
           this.isLoading.set(false);
-         
+
 
           localStorage.setItem('token', JSON.stringify(response.token));
           localStorage.setItem("refreshToken", JSON.stringify(response.refreshToken));

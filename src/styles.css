@@ -1,44 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'tailwindcss';
 
-:root{
-  /* ADMIN COLOR PALETTE */
+/* :root{
+  ADMIN COLOR PALETTE
   --nav-btn-color: #8455EF;
   --body-bg-color: #F7F9FB;
   --font-color: #191c1e;
   --btn-gradient-color: linear-gradient(135deg, #003ec7 0%, #6b38d4 100%);
 
-  /* --primary-color: #003EC7; */
-  /* --secondary-color:#6b38d4; */
-  /* --tertiary-color: #006f89; */
+  --primary-color: #003EC7;
+  --secondary-color:#6b38d4;
+  --tertiary-color: #006f89;
   --success-color: #DCFCE7;
 
-  /* --text-dark-color: #191c1e;
+  --text-dark-color: #191c1e;
   --text-mute-color: #434656;
   --text-white-color: #ffffff;
-  --text-error-color: #ba1a1a; */
+  --text-error-color: #ba1a1a;
 
 
   --error-container-color: #ffdad6;
   --primary-container-hover-color: #e0e3e5;
 
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif;
 
-  /*GLOBAL ADMIN FONT*/
-  /* --font-heading: 'Montserrat', sans-serif;
-  --font-body: 'Inter', sans-serif; */
-
-   /* BORDER RADIUS */
   --radius-sm: 0.75rem;
   --radius-md: 1rem;
   --radius-lg: 2rem;
   --radius-xl: 3rem;
   --radius-full: 9999px;
 
-   /* LAYOUT */
   --spacing-base: 8px;
   --spacing-gutter: 24px;
   --container-max: 1280px;
-}
+} */
 
 
 * {
@@ -62,32 +58,41 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+.bg-mesh {
+  background-color: #f7f9fb;
+  background-image:
+    radial-gradient(at 0% 0%, hsla(220, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(260, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(220, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(260, 100%, 95%, 1) 0, transparent 50%);
+}
 
- .glass-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-    }
+.sunken-input {
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+}
 
-    .bg-mesh {
-      background-color: #f7f9fb;
-      background-image:
-        radial-gradient(at 0% 0%, hsla(220, 100%, 95%, 1) 0, transparent 50%),
-        radial-gradient(at 100% 0%, hsla(260, 100%, 95%, 1) 0, transparent 50%),
-        radial-gradient(at 100% 100%, hsla(220, 100%, 95%, 1) 0, transparent 50%),
-        radial-gradient(at 0% 100%, hsla(260, 100%, 95%, 1) 0, transparent 50%);
-    }
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #003ec7 0%, #6b38d4 100%);
+  box-shadow: 0 4px 15px -3px rgba(0, 62, 199, 0.3);
+}
 
-    .sunken-input {
-      box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
-    }
+.btn-primary-gradient:hover {
+  box-shadow: 0 8px 25px -5px rgba(0, 62, 199, 0.4);
+}
 
-    .btn-primary-gradient {
-      background: linear-gradient(135deg, #003ec7 0%, #6b38d4 100%);
-      box-shadow: 0 4px 15px -3px rgba(0, 62, 199, 0.3);
-    }
-
-    .btn-primary-gradient:hover {
-      box-shadow: 0 8px 25px -5px rgba(0, 62, 199, 0.4);
-    }
+.glass-surface {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.glass-surface-dark {
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.btn-glow:hover {
+    box-shadow: 0 0 20px rgba(0, 82, 255, 0.4);
+}
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

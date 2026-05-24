@@ -1,0 +1,151 @@
+
+<!-- ── Hero ─────────────────────────────────────────────────── -->
+<section class="relative h-[80vh] min-h-150 flex items-center overflow-hidden bg-inverse-surface">
+  <div class="absolute inset-0 z-0">
+    <img
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWf-nns-InI6oRwGgQo28P-5ViQBQPjRPbBXUp4PVFf1XliGI99iiQLlfXNQr2zQY9Z99GceMGMKb30LCmrDfcsB8DDVJS4agdVeg9qCuMVzfwSzZ-EtNo2A4HFnvoX2t-HYdLMpAUKsVb_o84jIKEMT-Z-WgU0NdjbYhAZIujggXf11yvDmnJKAX_JAMemmZSd8yqydzMrlbSl71jTz9RSNyrcjjI6Hfh3I36gIIelg1VTRbSGrOFhkneqRC68o8BcqRJtMWuVW8"
+      alt="Hero background"
+      class="w-full h-full object-cover opacity-60"
+    />
+    <div class="absolute inset-0 bg-gradient-to-r from-inverse-surface via-inverse-surface/40 to-transparent"></div>
+  </div>
+
+  <div class="relative z-10 px-margin-desktop max-w-container-max mx-auto w-full">
+    <div class="max-w-2xl">
+      <span class="bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded-full font-label-md text-label-md mb-6 inline-block">
+        LAUNCHING SOON
+      </span>
+      <h1 class="font-display-lg text-display-lg text-surface-container-lowest mb-6">
+        Next-Gen Tech<br/>Collection
+      </h1>
+      <p class="text-outline-variant font-body-lg text-body-lg mb-10 max-w-lg">
+        Experience the intersection of high-performance engineering and haute couture design.
+        Elevate your digital lifestyle with Shopiva's most advanced hardware yet.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <app-gradient-button [isHoverAnimated]="false" btnClass="px-8 btn-glow" btnText="Shop The Drop"></app-gradient-button>
+        <button class="px-8 py-4 glass-surface-dark text-surface-container-lowest rounded-full font-label-md text-label-md hover:bg-white/20 transition-all active:scale-95">
+          Watch Film
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Categories Bento Grid ──────────────────────────────────── -->
+<section class="py-margin-desktop px-margin-desktop max-w-container-max mx-auto">
+  <div class="flex items-end justify-between mb-12">
+    <div>
+      <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Curated Spheres</h2>
+      <p class="text-on-surface-variant font-body-md text-body-md">Discover excellence across our core categories.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter h-150">
+    @for (category of categories; track category.label) {
+      <div [class]="category.gridClass + ' relative rounded-lg overflow-hidden group'">
+        <img
+          [src]="category.imageUrl"
+          [alt]="category.label"
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div [class]="category.overlayClass"></div>
+        <div [class]="category.contentClass">
+          <h3 [class]="category.titleClass">{{ category.label }}</h3>
+          @if (category.subtitle) {
+            <p class="text-white/80 font-label-md text-label-md">{{ category.subtitle }}</p>
+          }
+          @if (category.showCta) {
+            <button class="mt-4 text-white font-label-md text-label-md flex items-center gap-2 border-b border-white/40 pb-1">
+              Shop Now <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ── Featured Products (API-ready sub-component) ────────────── -->
+<app-featured-products></app-featured-products>
+
+<!-- ── Promo Banner ───────────────────────────────────────────── -->
+<section class="py-margin-desktop px-margin-desktop max-w-container-max mx-auto">
+  <div class="relative rounded-xl overflow-hidden bg-primary min-h-100 flex items-center">
+    <img
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvN207JzCZIyaZ-g5qWaaqG-ZHQue4TlwdXHFQVFVV8Up0cKbvbhipgCb8MHvPC0XLf5qyyyPiPL5fUw11-KtbA39-ilUylsCysXfHXDDr9jMpk_rrf4c1JXywYr3XIVZs999w2VnLN3c_0BjPe17WFWCOj3iTPdcUZCxwHBy5etxWzpHrlzlWbKCQpkq0gotyDTZZDAnQ9kmCY6U8b57J1lJJqtSjdH2O21jkreZ93IO7ZPXsKnFopwGJH7XTyLsZeyJ8f-3phy4"
+      alt="Summer Sale"
+      class="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
+    />
+    <div class="relative z-10 px-12 md:px-24 py-16 text-white max-w-2xl">
+      <h2 class="font-display-lg text-display-lg mb-4">Summer Solstice<br/>Sale</h2>
+      <p class="text-primary-fixed font-body-lg text-body-lg mb-8">
+        Up to 40% off the tech collection. Our annual event is here for a limited time only.
+      </p>
+      <button class="bg-white text-primary px-8 py-4 rounded-full font-label-md text-label-md hover:bg-primary-fixed transition-colors">
+        Claim Offer
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Testimonials ───────────────────────────────────────────── -->
+<section class="bg-surface py-margin-desktop">
+  <div class="px-margin-desktop max-w-container-max mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter items-center">
+      <div>
+        <h2 class="font-headline-lg text-headline-lg text-on-surface mb-6">Voices of the<br/>Collection</h2>
+        <div class="flex gap-4 mb-8">
+          @for (star of [1,2,3,4,5]; track star) {
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+          }
+        </div>
+        <blockquote class="text-on-surface-variant font-body-lg text-body-lg italic mb-8 border-l-4 border-primary pl-6">
+          "Shopiva isn't just a store; it's a statement. The Titan Phone X I purchased exceeds every expectation
+          of what mobile luxury should feel like. The craftsmanship is unrivaled."
+        </blockquote>
+        <div>
+          <p class="font-headline-md text-headline-md text-on-surface">Julian Vane</p>
+          <p class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">Creative Director, Neo-Design</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        @for (stat of stats; track stat.label) {
+          <div class="glass-surface p-8 rounded-lg" [class.mt-8]="stat.offset">
+            <span [class]="'font-display-lg text-display-lg block mb-2 ' + stat.colorClass">{{ stat.value }}</span>
+            <p class="font-label-md text-label-md text-on-surface-variant uppercase">{{ stat.label }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Newsletter ─────────────────────────────────────────────── -->
+<section class="py-margin-desktop px-margin-desktop max-w-container-max mx-auto mb-margin-desktop">
+  <div class="glass-surface-dark rounded-xl p-12 md:p-20 text-center relative overflow-hidden bg-inverse-surface">
+    <div class="relative z-10 max-w-2xl mx-auto">
+      <h2 class="font-headline-lg text-headline-lg text-surface-container-lowest mb-4">The Shopiva Insider</h2>
+      <p class="text-outline-variant font-body-md text-body-md mb-10">
+        Get early access to drops, exclusive invites to tech showcases, and curated style guides delivered to your inbox.
+      </p>
+      <div class="flex flex-col md:flex-row gap-4 max-w-lg mx-auto">
+        <input
+          type="email"
+          [(ngModel)]="emailInput"
+          placeholder="Enter your email address"
+          class="flex-1 bg-white/10 border border-white/20 rounded-full px-6 py-4 text-white focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-white/40"
+        />
+        <button
+          (click)="subscribeNewsletter()"
+          class="bg-primary text-white px-8 py-4 rounded-full font-label-md text-label-md hover:bg-primary-container transition-all"
+        >
+          Subscribe
+        </button>
+      </div>
+    </div>
+    <div class="absolute -top-20 -right-20 w-64 h-64 bg-secondary/20 blur-[100px] rounded-full"></div>
+    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-primary/20 blur-[100px] rounded-full"></div>
+  </div>
+</section>

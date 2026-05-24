@@ -2,11 +2,13 @@ import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth-service';
 import { NgClass } from '@angular/common';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
+import { ForgetPassword } from "../forget-password/forget-password";
+import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, NgClass, RouterLink, ForgetPassword, GradientButton],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -16,7 +18,7 @@ export class Login {
   isLoading: WritableSignal<boolean> = signal(false);
 
 
-  constructor(private _authService: AuthService) { }
+  constructor(private _authService: AuthService, private _router: Router) { }
 
 
   loginForm: FormGroup = new FormGroup({
@@ -51,6 +53,11 @@ export class Login {
       this.isLoading.set(false);
       this.loginForm.markAllAsTouched();
     }
+  }
+
+  onSignUpClick()
+  {
+    this._router.navigate(['/register']);
   }
 
 }

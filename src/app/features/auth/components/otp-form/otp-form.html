@@ -71,10 +71,11 @@
 
 
         <!-- Submit Button -->
-        <button [disabled]="otpForm.invalid" type="submit"
+        <app-gradient-button type="submit" [isDisabled]="otpForm.invalid" [btnText]="isResetMode ? 'RESET PASSWORD' : 'VERIFY ACCOUNT'"></app-gradient-button>
+        <!-- <button [disabled]="otpForm.invalid" type="submit"
           class="w-full btn-primary-gradient text-on-primary py-4 rounded-lg font-label-md text-label-md uppercase tracking-widest transition-all hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
           {{ isResetMode ? 'Reset Password' : 'Verify Account' }}
-        </button>
+        </button> -->
 
         <!-- Resend -->
         <div class="text-center">

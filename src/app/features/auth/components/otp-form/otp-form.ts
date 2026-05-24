@@ -3,10 +3,11 @@ import { AuthService } from '../../../../core/services/auth-service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 
 @Component({
   selector: 'app-otp-form',
-  imports: [ReactiveFormsModule, RouterLink, CommonModule],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule, GradientButton],
   templateUrl: './otp-form.html',
   styleUrl: './otp-form.css',
 })

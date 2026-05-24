@@ -59,7 +59,12 @@ export class OtpForm implements OnInit, AfterViewInit, OnDestroy {
 
   verifyOtp(): void {
     const email = this._authService.getEmail();
-    if (!email) return;
+
+    if (!email) {
+
+      this._router.navigate(['/forget-password']);
+      return;
+    }
 
     const otp = this.otp;
 
@@ -67,6 +72,7 @@ export class OtpForm implements OnInit, AfterViewInit, OnDestroy {
       this._authService.setOtp(otp);
       this._authService.ResetPassword(email, otp, this.otpForm.value.newPassword).subscribe({
         next: (res) => {
+          this._authService.clearOtp();
           this._router.navigate(['/login']);
         },
         error: (err) => console.error('Error resetting password:', err),
@@ -74,6 +80,7 @@ export class OtpForm implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this._authService.confirmEmailOtp(email, otp).subscribe({
         next: (res) => {
+          this._authService.clearOtp();
           this._router.navigate(['/login']);
         },
         error: (err) => console.error('Error verifying OTP:', err),

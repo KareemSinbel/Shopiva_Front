@@ -2,7 +2,7 @@ import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth-service';
 import { NgClass } from '@angular/common';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -15,42 +15,76 @@ export class Login {
   errorMessage: WritableSignal<string> = signal('');
   isLoading: WritableSignal<boolean> = signal(false);
 
-
-  constructor(private _authService: AuthService) { }
-
+  constructor(
+    private _authService: AuthService,
+    private _router: Router
+  ) { }
 
   loginForm: FormGroup = new FormGroup({
 
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    email: new FormControl('', [
+      Validators.required,
+      Validators.email
+    ]),
+
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6)
+    ]),
 
   });
 
-  submitForm() {
-
+  submitForm(): void {
 
     if (this.loginForm.valid) {
+
       this.isLoading.set(true);
+
       this._authService.login(this.loginForm.value).subscribe({
+
         next: (response) => {
+
           this.isLoading.set(false);
 
+          const isSessionSaved = this._authService.setSession(response);
 
-          localStorage.setItem('token', JSON.stringify(response.token));
-          localStorage.setItem("refreshToken", JSON.stringify(response.refreshToken));
+          if (!isSessionSaved) {
 
+            this.errorMessage.set('Login response did not include a valid token');
+            return;
+          }
+
+          const role = this._authService.getUserRole();
+
+          if (role === 'Admin') {
+
+            this._router.navigate(['/admin/dashboard']);
+
+          } else if (role === 'Seller') {
+
+            this._router.navigate(['/seller/dashboard']);
+
+          } else {
+
+            this._router.navigate(['/']);
+          }
         },
+
         error: (error) => {
 
           this.isLoading.set(false);
-          this.errorMessage.set(error.error.errors.description);
 
+          this.errorMessage.set(
+            error?.error?.errors?.description ||
+            'Something went wrong'
+          );
         }
       });
+
     } else {
-      this.isLoading.set(false);
+
       this.loginForm.markAllAsTouched();
     }
   }
-
 }
+

@@ -1,0 +1,191 @@
+<div class="pt-24 px-margin-desktop pb-margin-desktop max-w-container-max mx-auto space-y-gutter">
+  <!-- Loading State -->
+  @if (loading()) {
+  <div class="flex items-center justify-center py-20">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+      <p class="text-on-surface-variant font-body-md">Loading dashboard...</p>
+    </div>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+  <div class="bg-error/10 border border-error rounded-lg p-4 mb-6">
+    <p class="text-error font-body-md">{{ error() }}</p>
+  </div>
+  }
+
+  <!-- Dashboard Content -->
+  @if (!loading()) {
+  <!-- Welcome Header -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="font-headline-lg text-headline-lg text-on-surface">Dashboard</h1>
+      <p class="text-on-surface-variant font-body-md">Welcome back, Seller. Here's what's happening with
+        Shopiva today.</p>
+    </div>
+    <app-gradient-button btnText="Add Product" (click)="onAddProduct()"></app-gradient-button>
+  </div>
+
+  <!-- Bento Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+    <!-- Stat Card 1: Total Revenue -->
+    <div class="glass-card p-6 rounded-lg space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="p-3 rounded-xl bg-primary-container/10 text-primary">
+          <span class="material-symbols-outlined">payments</span>
+        </div>
+        <span class="text-primary font-label-md text-label-sm">+{{ dashboardData()?.totalOrders || 0 }}</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-label-md font-label-md">Total Revenue</p>
+        <p class="text-headline-md font-headline-md">${{ (dashboardData()?.totalRevenue || 0).toFixed(2) }}</p>
+      </div>
+      <div class="h-10 w-full flex items-end gap-1">
+        <div class="flex-1 bg-primary/20 h-4 rounded-t-sm"></div>
+        <div class="flex-1 bg-primary/20 h-6 rounded-t-sm"></div>
+        <div class="flex-1 bg-primary/40 h-8 rounded-t-sm"></div>
+        <div class="flex-1 bg-primary/60 h-5 rounded-t-sm"></div>
+        <div class="flex-1 bg-primary/30 h-7 rounded-t-sm"></div>
+        <div class="flex-1 bg-primary/80 h-9 rounded-t-sm"></div>
+        <div class="flex-1 bg-primary h-10 rounded-t-sm"></div>
+      </div>
+    </div>
+
+    <!-- Stat Card 2: Active Orders -->
+    <div class="glass-card p-6 rounded-lg space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="p-3 rounded-xl bg-secondary-container/10 text-secondary">
+          <span class="material-symbols-outlined">shopping_cart_checkout</span>
+        </div>
+        <span class="text-secondary font-label-md text-label-sm">{{ dashboardData()?.processingOrders || 0 }}
+          processing</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-label-md font-label-md">Total Orders</p>
+        <p class="text-headline-md font-headline-md">{{ dashboardData()?.totalOrders || 0 }}</p>
+      </div>
+      <div class="h-10 w-full flex items-end gap-1">
+        <div class="flex-1 bg-secondary/20 h-6 rounded-t-sm"></div>
+        <div class="flex-1 bg-secondary/30 h-4 rounded-t-sm"></div>
+        <div class="flex-1 bg-secondary/50 h-9 rounded-t-sm"></div>
+        <div class="flex-1 bg-secondary/70 h-7 rounded-t-sm"></div>
+        <div class="flex-1 bg-secondary/40 h-5 rounded-t-sm"></div>
+        <div class="flex-1 bg-secondary/90 h-8 rounded-t-sm"></div>
+        <div class="flex-1 bg-secondary h-6 rounded-t-sm"></div>
+      </div>
+    </div>
+
+    <!-- Stat Card 3: Average Rating -->
+    <div class="glass-card p-6 rounded-lg space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="p-3 rounded-xl bg-tertiary-container/10 text-tertiary">
+          <span class="material-symbols-outlined">star</span>
+        </div>
+        <span class="text-tertiary font-label-md text-label-sm">{{ dashboardData()?.totalReviews || 0 }} reviews</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-label-md font-label-md">Average Rating</p>
+        <p class="text-headline-md font-headline-md">{{ (dashboardData()?.averageRating || 0).toFixed(1) }} / 5.0</p>
+      </div>
+      <div class="h-10 w-full flex items-end gap-1">
+        <div class="flex-1 bg-tertiary/20 h-8 rounded-t-sm"></div>
+        <div class="flex-1 bg-tertiary/40 h-9 rounded-t-sm"></div>
+        <div class="flex-1 bg-tertiary/60 h-10 rounded-t-sm"></div>
+        <div class="flex-1 bg-tertiary/80 h-9 rounded-t-sm"></div>
+        <div class="flex-1 bg-tertiary h-10 rounded-t-sm"></div>
+        <div class="flex-1 bg-tertiary h-10 rounded-t-sm"></div>
+        <div class="flex-1 bg-tertiary h-10 rounded-t-sm"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Analytics Chart and Order Status Breakdown -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+    <div class="lg:col-span-2 glass-card p-8 rounded-lg min-h-100">
+      <div class="flex items-center justify-between mb-8">
+        <h3 class="font-headline-md text-headline-md">Order Status Breakdown</h3>
+        <div class="flex bg-surface-container rounded-full p-1">
+          <button
+            class="px-4 py-1 rounded-full bg-surface-container-lowest shadow-sm font-label-md text-label-sm">Current</button>
+        </div>
+      </div>
+      <div class="relative h-64 w-full flex items-end justify-between px-4 pb-4">
+        <div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+          <div class="border-b border-outline"></div>
+          <div class="border-b border-outline"></div>
+          <div class="border-b border-outline"></div>
+          <div class="border-b border-outline"></div>
+        </div>
+        <!-- Order Status Bars -->
+        <div class="flex flex-col items-center flex-1">
+          <div
+            class="w-12 bg-linear-to-t from-yellow-400/20 to-yellow-400 rounded-t-xl h-[{{ (dashboardData()?.pendingOrders || 0) * 5 }}%] transition-all hover:opacity-80 min-h-8">
+          </div>
+          <span class="text-xs font-label-sm text-on-surface-variant mt-2">Pending</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div
+            class="w-12 bg-linear-to-t from-blue-400/20 to-blue-400 rounded-t-xl h-[{{ (dashboardData()?.processingOrders || 0) * 5 }}%] transition-all hover:opacity-80 min-h-8">
+          </div>
+          <span class="text-xs font-label-sm text-on-surface-variant mt-2">Processing</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div
+            class="w-12 bg-linear-to-t from-purple-400/20 to-purple-400 rounded-t-xl h-[{{ (dashboardData()?.shippedOrders || 0) * 5 }}%] transition-all hover:opacity-80 min-h-8">
+          </div>
+          <span class="text-xs font-label-sm text-on-surface-variant mt-2">Shipped</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div
+            class="w-12 bg-linear-to-t from-green-400/20 to-green-400 rounded-t-xl h-[{{ (dashboardData()?.deliveredOrders || 0) * 5 }}%] transition-all hover:opacity-80 min-h-8">
+          </div>
+          <span class="text-xs font-label-sm text-on-surface-variant mt-2">Delivered</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Stats -->
+    <div class="glass-card p-8 rounded-lg flex flex-col">
+      <h3 class="font-headline-md text-headline-md mb-6">Product Stats</h3>
+      <div class="space-y-6 flex-1">
+        <div class="space-y-2">
+          <div class="flex justify-between font-label-md text-label-md">
+            <span>Total Products</span>
+            <span>{{ dashboardData()?.totalProducts || 0 }}</span>
+          </div>
+          <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+            <div class="bg-primary h-full w-full"></div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between font-label-md text-label-md">
+            <span>Active Products</span>
+            <span>{{ dashboardData()?.activeProducts || 0 }}</span>
+          </div>
+          <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+            <div
+              class="bg-secondary h-full w-[{{ (dashboardData()?.activeProducts || 0) / (dashboardData()?.totalProducts || 1) * 100 }}%]">
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between font-label-md text-label-md">
+            <span>Out of Stock</span>
+            <span>{{ dashboardData()?.outOfStockProducts || 0 }}</span>
+          </div>
+          <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+            <div
+              class="bg-error h-full w-[{{ (dashboardData()?.outOfStockProducts || 0) / (dashboardData()?.totalProducts || 1) * 100 }}%]">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 pt-8 border-t border-outline-variant/30 text-center">
+        <p class="text-body-md font-body-md italic text-on-surface-variant">{{ dashboardData()?.totalProducts || 0 }}
+          total products in your inventory</p>
+      </div>
+    </div>
+  </div>
+  }
+</div>

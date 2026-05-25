@@ -1,0 +1,178 @@
+<div class="pt-24 px-margin-desktop pb-margin-desktop max-w-container-max mx-auto space-y-gutter">
+  <!-- Loading State -->
+  @if (loading()) {
+  <div class="flex items-center justify-center py-20">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+      <p class="text-on-surface-variant font-body-md">Loading inventory...</p>
+    </div>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+  <div class="bg-error/10 border border-error rounded-lg p-4 mb-6">
+    <p class="text-error font-body-md">{{ error() }}</p>
+  </div>
+  }
+
+  <!-- Inventory Content -->
+  @if (!loading()) {
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="font-headline-lg text-headline-lg text-on-surface">Inventory</h1>
+      <p class="text-on-surface-variant font-body-md">Manage your products and track inventory levels.</p>
+    </div>
+    <app-gradient-button btnText="Add Product" (click)="onAddProduct()"></app-gradient-button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="glass-card p-6 rounded-lg space-y-4">
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="flex-1">
+        <input type="text" placeholder="Search products..." (input)="onSearch($event.target.value)"
+          class="w-full px-4 py-2 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none" />
+      </div>
+      <select [(ngModel)]="sortBy" (change)="onSortChange(sortBy())"
+        class="px-4 py-2 bg-surface-container rounded-lg border border-outline-variant focus:border-primary">
+        <option value="createdAt">Sort by: Date</option>
+        <option value="price">Sort by: Price</option>
+        <option value="name">Sort by: Name</option>
+        <option value="stock">Sort by: Stock</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div class="glass-card overflow-hidden rounded-lg">
+    <div class="px-8 py-6 border-b border-outline-variant/30 flex items-center justify-between">
+      <h3 class="font-headline-md text-headline-md">Product Inventory</h3>
+      <span class="text-on-surface-variant text-label-sm font-label-sm">Showing {{ products().length }} of {{
+        totalCount() }} products</span>
+    </div>
+
+    @if (products().length > 0) {
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead
+          class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+          <tr>
+            <th class="px-8 py-4">Product Name</th>
+            <th class="px-8 py-4">Category</th>
+            <th class="px-8 py-4">Price</th>
+            <th class="px-8 py-4">Stock</th>
+            <th class="px-8 py-4">Units Sold</th>
+            <th class="px-8 py-4">Rating</th>
+            <th class="px-8 py-4">Status</th>
+            <th class="px-8 py-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant/20 font-body-md text-body-md">
+          @for (product of products(); track product.id) {
+          <tr class="hover:bg-primary/5 transition-colors">
+            <td class="px-8 py-6 flex items-center gap-4">
+              @if (product.imageUrls.length > 0) {
+              <div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden">
+                <img [src]="product.imageUrls[0]" [alt]="product.name" class="w-full h-full object-cover" />
+              </div>
+              } @else {
+              <div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-surface-variant">image</span>
+              </div>
+              }
+              <span class="font-medium">{{ product.name }}</span>
+            </td>
+            <td class="px-8 py-6">{{ product.categoryName }}</td>
+            <td class="px-8 py-6">
+              @if (product.discountedPrice) {
+              <div>
+                <span class="line-through text-on-surface-variant">${{ product.price.toFixed(2) }}</span>
+                <span class="text-error font-semibold">${{ product.discountedPrice.toFixed(2) }}</span>
+              </div>
+              } @else {
+              <span>${{ product.price.toFixed(2) }}</span>
+              }
+            </td>
+            <td class="px-8 py-6">
+              <div class="flex items-center gap-2">
+                @if (product.stock > 5) {
+                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>{{ product.stock }} in stock</span>
+                } @else if (product.stock > 0) {
+                <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                <span class="text-yellow-700">{{ product.stock }} low stock</span>
+                } @else {
+                <span class="w-2 h-2 bg-error rounded-full"></span>
+                <span class="text-error">Out of stock</span>
+                }
+              </div>
+            </td>
+            <td class="px-8 py-6">{{ product.totalUnitsSold }}</td>
+            <td class="px-8 py-6">
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-yellow-500 text-[18px]">star</span>
+                <span>{{ (product.averageRating).toFixed(1) }}</span>
+                <span class="text-on-surface-variant text-label-sm">({{ product.reviewCount }})</span>
+              </div>
+            </td>
+            <td class="px-8 py-6">
+              @if (product.isActive) {
+              <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-label-sm font-label-sm">Active</span>
+              } @else {
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-label-sm font-label-sm">Inactive</span>
+              }
+            </td>
+            <td class="px-8 py-6">
+              <div class="flex gap-2">
+                <button (click)="onEditProduct(product.id)"
+                  class="flex items-center gap-1 px-3 py-1 text-primary hover:underline font-label-md text-label-sm"
+                  title="Edit product">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                  Edit
+                </button>
+                <button (click)="onDeleteProduct(product.id, product.name)"
+                  class="flex items-center gap-1 px-3 py-1 text-error hover:underline font-label-md text-label-sm"
+                  title="Delete product">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="px-8 py-4 bg-surface-container-low flex justify-between items-center text-on-surface-variant text-label-sm font-label-sm">
+      <span>Page {{ filter().page }} of {{ getPageCount() }}</span>
+      <div class="flex gap-2">
+        <button [disabled]="filter().page === 1" (click)="onPageChange(filter().page - 1)"
+          class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-lowest disabled:opacity-50 disabled:cursor-not-allowed">
+          Previous
+        </button>
+        @for (page of pages(); track page) {
+        <button [class.bg-primary]="filter().page === page" [class.text-on-primary]="filter().page === page"
+          [class.text-on-surface]="filter().page !== page" [class.border-outline-variant]="filter().page !== page"
+          [class.border-primary]="filter().page === page" (click)="onPageChange(page)"
+          class="px-3 py-1 border rounded hover:bg-surface-container-lowest">
+          {{ page }}
+        </button>
+        }
+        <button [disabled]="filter().page === getPageCount()" (click)="onPageChange(filter().page + 1)"
+          class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-lowest disabled:opacity-50 disabled:cursor-not-allowed">
+          Next
+        </button>
+      </div>
+    </div>
+    } @else {
+    <div class="px-8 py-12 text-center">
+      <span class="material-symbols-outlined text-on-surface-variant text-[48px] block mb-4">inbox</span>
+      <p class="text-on-surface-variant font-body-md">Add your first product</p>
+    </div>
+    }
+  </div>
+  }
+</div>

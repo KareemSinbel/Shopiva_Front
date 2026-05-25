@@ -3,12 +3,11 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../../../core/services/auth-service';
 import { NgClass } from '@angular/common';
 import { Router, RouterLink } from "@angular/router";
-import { ForgetPassword } from "../forget-password/forget-password";
 import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, NgClass, RouterLink, ForgetPassword, GradientButton],
+  imports: [ReactiveFormsModule, NgClass, RouterLink, GradientButton],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

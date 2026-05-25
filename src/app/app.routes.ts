@@ -14,16 +14,18 @@ import { SellerInventory } from './features/seller-inventory/seller-inventory';
 import { SellerOrder } from './features/seller-order/seller-order';
 import { SellerAnalytics } from './features/seller-analytics/seller-analytics';
 import { ProductForm } from './features/seller-dashboard/components/product-form/product-form';
+import { ProductDetailComponent } from './features/product details/components/product-details/product-details';
 
 export const routes: Routes = [
   {
     path: "",
     component: MainLayout,
     children:
-      [
-        { path: '', redirectTo: 'home', pathMatch: 'full' },
-        { path: "home", component: Home, pathMatch: "full" },
-      ]
+    [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: "home", component: Home, pathMatch: "full"},
+      { path: "product/:id", component: ProductDetailComponent, pathMatch: "full"}
+    ]
   },
   { path: "login", component: Login, pathMatch: "full" },
   { path: "register", component: Register, pathMatch: "full" },

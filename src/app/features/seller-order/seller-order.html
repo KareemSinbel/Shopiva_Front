@@ -1,0 +1,175 @@
+<section class="pt-24 pb-margin-desktop px-6 md:px-margin-desktop max-w-container-max mx-auto">
+  <!-- Loading State -->
+  @if (loading()) {
+  <div class="flex items-center justify-center py-20">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+      <p class="text-on-surface-variant font-body-md">Loading orders...</p>
+    </div>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+  <div class="bg-error/10 border border-error rounded-lg p-4 mb-6">
+    <p class="text-error font-body-md">{{ error() }}</p>
+  </div>
+  }
+
+  <!-- Orders Content -->
+  @if (!loading()) {
+  <!-- Header Summary -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter mb-8">
+    <div>
+      <h2 class="font-headline-lg text-headline-lg text-on-surface">Orders</h2>
+      <p class="text-on-surface-variant font-body-md mt-1">Real-time oversight of your Shopiva logistics.</p>
+    </div>
+  </div>
+
+  <!-- Dashboard Stats Bento -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
+    <div class="glass-panel p-6 rounded-lg relative overflow-hidden group">
+      <div
+        class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500">
+      </div>
+      <p class="text-label-sm font-label-md text-outline uppercase tracking-wider mb-2">Total Orders</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-headline-lg text-on-surface">{{ dashboardData()?.totalOrders || 0 }}</span>
+        <span class="text-primary font-label-md text-label-sm">{{ dashboardData()?.pendingOrders || 0 }} pending</span>
+      </div>
+    </div>
+    <div class="glass-panel p-6 rounded-lg relative overflow-hidden group">
+      <div
+        class="absolute -right-4 -top-4 w-24 h-24 bg-secondary/5 rounded-full group-hover:scale-150 transition-transform duration-500">
+      </div>
+      <p class="text-label-sm font-label-md text-outline uppercase tracking-wider mb-2">Pending Shipments</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-headline-lg text-on-surface">{{ dashboardData()?.processingOrders || 0
+          }}</span>
+        <span class="text-error font-label-md text-label-sm">In Progress</span>
+      </div>
+    </div>
+    <div class="glass-panel p-6 rounded-lg relative overflow-hidden group">
+      <div
+        class="absolute -right-4 -top-4 w-24 h-24 bg-tertiary-container/5 rounded-full group-hover:scale-150 transition-transform duration-500">
+      </div>
+      <p class="text-label-sm font-label-md text-outline uppercase tracking-wider mb-2">Completed Deliveries</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-headline-lg text-on-surface">{{ dashboardData()?.deliveredOrders || 0
+          }}</span>
+        <span class="text-green-700 font-label-md text-label-sm">{{ ((dashboardData()?.deliveredOrders || 0) /
+          (dashboardData()?.totalOrders || 1) * 100).toFixed(1) }}%</span>
+      </div>
+    </div>
+    <div class="glass-panel p-6 rounded-lg relative overflow-hidden group">
+      <div
+        class="absolute -right-4 -top-4 w-24 h-24 bg-secondary-fixed/5 rounded-full group-hover:scale-150 transition-transform duration-500">
+      </div>
+      <p class="text-label-sm font-label-md text-outline uppercase tracking-wider mb-2">Total Revenue</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-headline-lg text-on-surface">${{ (dashboardData()?.totalRevenue ||
+          0).toFixed(0) }}</span>
+        <span class="text-primary font-label-md text-label-sm">From orders</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Filter -->
+  <div class="glass-card p-6 rounded-lg mb-8">
+    <div class="flex flex-col md:flex-row gap-4 items-center">
+      <label class="font-label-md text-label-md text-on-surface">Filter by Status:</label>
+      <div class="flex gap-2">
+        <button (click)="onStatusFilter('')" [class.bg-primary]="selectedStatus() === ''"
+          [class.text-on-primary]="selectedStatus() === ''"
+          class="px-4 py-2 bg-surface-container text-on-surface rounded-lg hover:bg-surface-container-high transition-colors">
+          All Orders
+        </button>
+        @for (status of orderStatuses; track status) {
+        <button (click)="onStatusFilter(status)" [class.bg-primary]="selectedStatus() === status"
+          [class.text-on-primary]="selectedStatus() === status"
+          class="px-4 py-2 bg-surface-container text-on-surface rounded-lg hover:bg-surface-container-high transition-colors">
+          {{ status }}
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+  <!-- Data Table Container -->
+  <div class="glass-panel rounded-lg overflow-hidden border-outline-variant/10">
+
+    <!-- Data Table Container -->
+    <div class="glass-panel rounded-lg overflow-hidden border-outline-variant/10">
+      @if (orders().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-surface-container-low/50 border-b border-outline-variant/10">
+            <tr>
+              <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Order ID</th>
+              <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Customer</th>
+              <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Date</th>
+              <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Items</th>
+              <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Total Amount</th>
+              <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/10">
+            @for (order of orders(); track order.orderId) {
+            <tr class="hover:bg-primary/5 transition-colors group">
+              <td class="px-6 py-4 font-label-md text-on-surface">#{{ order.orderNumber }}</td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-[12px]">
+                    {{ order.customerEmail.charAt(0).toUpperCase() }}
+                  </div>
+                  <span class="font-body-md text-on-surface">{{ order.customerEmail }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-body-md text-on-surface-variant">{{ order.createdAt | date: 'short' }}</td>
+              <td class="px-6 py-4 font-body-md text-on-surface">{{ order.sellerItemCount }}</td>
+              <td class="px-6 py-4 font-label-md text-on-surface">${{ order.sellerItemsTotal.toFixed(2) }}</td>
+              <td class="px-6 py-4">
+                <span class="status-pill px-3 py-1 rounded-full text-label-sm font-label-sm"
+                  [class]="'bg-opacity-20 ' + getStatusBadgeClass(order.status)">
+                  {{ order.status }}
+                </span>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-between">
+        <span class="font-label-md text-label-sm text-on-surface-variant">Page {{ filter().page }} of {{ getPageCount()
+          }}</span>
+        <div class="flex items-center gap-2">
+          <button [disabled]="filter().page === 1" (click)="onPageChange(filter().page - 1)"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 hover:bg-white transition-colors text-outline disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          @for (page of Array.from({length: getPageCount()}, (_, i) => i + 1); track page) {
+          <button [class.bg-primary]="filter().page === page" [class.text-on-primary]="filter().page === page"
+            (click)="onPageChange(page)"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+            {{ page }}
+          </button>
+          }
+          <button [disabled]="filter().page === getPageCount()" (click)="onPageChange(filter().page + 1)"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 hover:bg-white transition-colors text-outline disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
+      } @else {
+      <div class="px-8 py-12 text-center">
+        <span class="material-symbols-outlined text-on-surface-variant text-[48px] block mb-4">shopping_bag</span>
+        <p class="text-on-surface-variant font-body-md">no orders yet</p>
+      </div>
+      }
+    </div>
+  </div>
+  }
+</section>

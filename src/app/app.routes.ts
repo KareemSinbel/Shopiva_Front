@@ -6,22 +6,44 @@ import { OtpForm } from './features/auth/components/otp-form/otp-form';
 import { Unauthorized } from './features/auth/components/unauthorized/unauthorized';
 import { Home } from './features/home/components/home/home';
 import { MainLayout } from './layout/main-layout/main-layout';
+import { SellerLayout } from './layout/seller-layout/seller-layout';
+import { SellerDashboard } from './features/seller-dashboard/seller-dashboard';
+import { authGuard } from './core/guards/auth-guard';
+import { roleGuard } from './core/guards/role-guard';
+import { SellerInventory } from './features/seller-inventory/seller-inventory';
+import { SellerOrder } from './features/seller-order/seller-order';
+import { SellerAnalytics } from './features/seller-analytics/seller-analytics';
+import { ProductForm } from './features/seller-dashboard/components/product-form/product-form';
 
 export const routes: Routes = [
   {
     path: "",
     component: MainLayout,
     children:
-    [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path: "home", component: Home, pathMatch: "full"},
-    ]
+      [
+        { path: '', redirectTo: 'home', pathMatch: 'full' },
+        { path: "home", component: Home, pathMatch: "full" },
+      ]
   },
   { path: "login", component: Login, pathMatch: "full" },
   { path: "register", component: Register, pathMatch: "full" },
   { path: "forget-password", component: ForgetPassword, pathMatch: "full" },
   { path: "otp-confirmation", component: OtpForm, pathMatch: "full" },
   { path: "unauthorized", component: Unauthorized, pathMatch: "full" },
+
+  {
+    path: "seller",
+    component: SellerLayout,
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: "dashboard", component: SellerDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Seller'] }, pathMatch: "full" },
+      { path: "inventory", component: SellerInventory, /*canActivate: [authGuard, roleGuard], data: { roles: ['Seller'] } ,*/ pathMatch: "full" },
+      { path: "orders", component: SellerOrder, /*canActivate: [authGuard, roleGuard], data: { roles: ['Seller'] } ,*/ pathMatch: "full" },
+      { path: "analytics", component: SellerAnalytics, /*canActivate: [authGuard, roleGuard], data: { roles: ['Seller'] } ,*/ pathMatch: "full" },
+      { path: "add-product", component: ProductForm, pathMatch: "full" },
+      { path: "edit-product/:id", component: ProductForm, pathMatch: "full" },
+    ]
+  },
 
   { path: '**', redirectTo: 'home' }
 ];

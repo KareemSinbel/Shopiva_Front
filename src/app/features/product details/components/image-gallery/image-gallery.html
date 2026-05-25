@@ -1,0 +1,30 @@
+<div class="space-y-6">
+  <!-- Main image -->
+  <div class="glass-card rounded-lg overflow-hidden aspect-[4/5]">
+    <img
+      [src]="activeImage()"
+      [alt]="altPrefix + ' - main view'"
+      class="w-full h-full object-cover transition-opacity duration-300"
+    />
+  </div>
+
+  <!-- Thumbnails -->
+  <div class="grid grid-cols-4 gap-4">
+    @for (img of images; track $index) {
+      <div
+        class="glass-card rounded-lg overflow-hidden aspect-square cursor-pointer border-2 transition-all"
+        [class.border-primary]="activeIndex() === $index"
+        [class.border-transparent]="activeIndex() !== $index"
+        [class.opacity-70]="activeIndex() !== $index"
+        [class.hover:opacity-100]="activeIndex() !== $index"
+        (click)="selectImage($index)"
+      >
+        <img
+          [src]="img"
+          [alt]="altPrefix + ' view ' + ($index + 1)"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    }
+  </div>
+</div>

@@ -6,6 +6,7 @@ import { OtpForm } from './features/auth/components/otp-form/otp-form';
 import { Unauthorized } from './features/auth/components/unauthorized/unauthorized';
 import { Home } from './features/home/components/home/home';
 import { MainLayout } from './layout/main-layout/main-layout';
+import { ProductDetailComponent } from './features/product details/components/product-details/product-details';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,7 @@ export const routes: Routes = [
     [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: "home", component: Home, pathMatch: "full"},
+      { path: "product/:id", component: ProductDetailComponent, pathMatch: "full"}
     ]
   },
   { path: "login", component: Login, pathMatch: "full" },

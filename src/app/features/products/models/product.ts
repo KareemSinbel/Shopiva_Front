@@ -13,3 +13,5 @@ export interface Product {
   badge: 'TECH' | 'LIMITED' | 'NEW' | 'LUXURY';
   badgeColor?: string;
 }
+
+export type RelatedProduct = Pick<Product, 'id' | 'name' | 'price' | 'imageUrls'>;

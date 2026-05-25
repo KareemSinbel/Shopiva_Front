@@ -1,4 +1,4 @@
-<div class="glass-surface p-4 rounded-lg flex flex-col group active:scale-95 transition-all">
+<div class="glass-surface p-4 rounded-lg flex flex-col group transition-all" (click)="onCardClick()" [class.active-scale]="isCardActive" (mousedown)="isCardActive = true" (mouseup)="isCardActive = false" (mouseleave)="isCardActive = false">
   <div class="aspect-square rounded-lg overflow-hidden mb-6 relative">
     <img
       [src]="product.imageUrls[0]"
@@ -18,10 +18,10 @@
       {{ product.price | currency }}
     </span>
     <button
-      (click)="addToCart()"
+      (click)="addToCart($event)"
+      (mousedown)="onButtonMouseDown($event)"
       class="bg-surface-container-highest p-3 rounded-full hover:bg-primary hover:text-white transition-colors"
-      [attr.aria-label]="'Add ' + product.name + ' to cart'"
-    >
+      [attr.aria-label]="'Add ' + product.name + ' to cart'">
       <span class="material-symbols-outlined">add_shopping_cart</span>
     </button>
   </div>

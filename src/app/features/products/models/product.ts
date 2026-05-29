@@ -12,6 +12,24 @@ export interface Product {
   imageUrls: string[];
   badge: 'TECH' | 'LIMITED' | 'NEW' | 'LUXURY';
   badgeColor?: string;
+  createdAt?: Date | string;
+}
+
+export interface ProductFilterDto {
+  search?: string;
+  categoryId?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  sortBy?: string;
+  descending?: boolean;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface Category {
+  id: number;
+  name: string;
 }
 
 export type RelatedProduct = Pick<Product, 'id' | 'name' | 'price' | 'imageUrls'>;

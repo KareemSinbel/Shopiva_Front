@@ -1,0 +1,47 @@
+<nav class="sidebar">
+
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <img
+      src="https://lh3.googleusercontent.com/aida/ADBb0ui84xmS0wDLhGD0QX-uw0Cg_r9aARco4eX8iueLgG0MIVkWF1ipSBpBnzgHVrc_XBb4hwC0cAk_DGVj0SIlAyJwzUUxAt-cBI8ZNgnAEQ6VHclWC8MT3-oq1HxBtI82njIu1MqKQsxfLz8QuIIsl1meSjLoap6WmT3dv3PuHVcDNM3RMHuPre8mvDd4_56VSIIkulm4P4qlENkrRPusc5IKAgS5xrASxtUsBC8TWm8d1CYYRSj9v_Q3wys"
+      alt="Shopiva"
+      class="logo-img"
+    />
+    <span class="logo-text">Shopiva</span>
+  </div>
+
+  <!-- Admin Profile -->
+  <div class="admin-profile">
+    <div class="admin-avatar">
+      <span class="material-symbols-outlined">person</span>
+    </div>
+    <div>
+      <p class="admin-name">Admin Portal</p>
+      <p class="admin-role">Premium Seller</p>
+    </div>
+  </div>
+
+  <!-- Nav Links -->
+  <div class="nav-links">
+    @for (link of navLinks; track link.route) {
+      <a
+        [routerLink]="link.route"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <span class="material-symbols-outlined">{{ link.icon }}</span>
+        <span>{{ link.label }}</span>
+      </a>
+    }
+  </div>
+
+  <!-- Bottom -->
+  <div class="sidebar-bottom">
+    <button class="launch-btn">Launch Campaign</button>
+    <a href="#" class="nav-item help-item">
+      <span class="material-symbols-outlined">help</span>
+      <span>Help Center</span>
+    </a>
+  </div>
+
+</nav>

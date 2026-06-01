@@ -32,7 +32,6 @@ export const routes: Routes = [
         { path: "product/:id", component: ProductDetailComponent, pathMatch: "full" },
         { path: "productlist", component: ProductList, pathMatch: "full" },
         { path: "cart", component: Cart, pathMatch: "full" },
-        { path: 'payment', component: Payment, pathMatch: "full" },
       ]
   },
   { path: "login", component: Login, pathMatch: "full" },
@@ -40,6 +39,8 @@ export const routes: Routes = [
   { path: "forget-password", component: ForgetPassword, pathMatch: "full" },
   { path: "otp-confirmation", component: OtpForm, pathMatch: "full" },
   { path: "unauthorized", component: Unauthorized, pathMatch: "full" },
+  { path: 'payment', component: Payment, pathMatch: "full" },
+
 
   {
     path: "seller",
@@ -70,6 +71,7 @@ export const routes: Routes = [
       }
     ]
   },
+
   { path: '**', redirectTo: 'home' }
 ];
 

@@ -12,7 +12,7 @@ import {
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { ApiConfig } from '../../../../core/services/api-config';
@@ -21,6 +21,7 @@ import { CheckoutSteps } from '../../../cart/components/checkout-steps/checkout-
 import { Footer } from '../../../../shared/components/footer/footer';
 import { CartItemModel, OrderSummaryModel } from '../../../cart/models/cart-model';
 import { API_ENDPOINTS } from '../../../../core/constants/api-endpoints';
+import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 
 
 const TAX_RATE = 0.08;
@@ -37,7 +38,7 @@ interface CreatePaymentIntentResponse {
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, FormsModule, CheckoutSteps, Footer],
+  imports: [CurrencyPipe, FormsModule, CheckoutSteps, Footer, GradientButton, RouterLink],
   templateUrl: './payment.html',
 })
 

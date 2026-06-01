@@ -1,15 +1,15 @@
-import { Component, OnInit, inject, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Product, ProductFilterDto, Category } from '../products/models/product';
 import { ProductService } from '../../core/services/product-service';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-product-list',
-  imports: [CommonModule, FormsModule, ProductCard],
+  imports: [FormsModule, ProductCard, AsyncPipe],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
@@ -34,7 +34,7 @@ export class ProductList implements OnInit, OnDestroy {
 
   totalPages: number = 1;
   totalCount: number = 0;
-  isLoading: boolean = false;
+  isLoading = signal<boolean>(false);
 
   // Pagination constants
   readonly PAGE_SIZE_OPTIONS = [10, 20, 50];
@@ -80,7 +80,7 @@ export class ProductList implements OnInit, OnDestroy {
    * Fetch products based on current filter
    */
   private fetchProducts(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.products$ = null;
 
     this.productService
@@ -94,11 +94,11 @@ export class ProductList implements OnInit, OnDestroy {
           });
           this.totalCount = response.totalCount;
           this.totalPages = response.totalPages;
-          this.isLoading = false;
+          this.isLoading.set(false);
         },
         error: (error) => {
           console.error('Failed to fetch products:', error);
-          this.isLoading = false;
+          this.isLoading.set(false) ;
           this.products$ = new Observable((observer) => {
             observer.next([]);
             observer.complete();

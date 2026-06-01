@@ -80,10 +80,29 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   addToCart(product: Product): void {
-    // TODO: dispatch to CartService or NgRx store
-    this.cartService.addToCart(this.product()!.id, 1, this.product()!.discountPrice ?? this.product()!.price).subscribe(() =>{
-      console.log('Added successfully');
+    const unitPrice = product.discountPrice ?? product.price;
+
+    // First get current cart to check if item already exists
+    this.cartService.getCart().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (cart) => {
+        const existing = cart.items.find(i => i.product.id === product.id);
+
+        if (existing) {
+          // Item already in cart — update quantity instead of adding new row
+          const newQty = existing.quantity + this.quantity;
+          this.cartService.updateItemQuantity(product.id, newQty, existing.id).subscribe({
+            next: () => console.log('Quantity updated:', newQty),
+            error: () => console.error('Failed to update quantity'),
+          });
+        } else {
+          // New item — add it
+          this.cartService.addToCart(product.id, this.quantity, unitPrice).subscribe({
+            next: () => console.log('Added to cart:', { productId: product.id, quantity: this.quantity }),
+            error: () => console.error('Failed to add to cart'),
+          });
+        }
+      },
+      error: () => console.error('Failed to fetch cart'),
     });
-    console.log('Add to cart:', { productId: product.id, quantity: this.quantity });
   }
 }

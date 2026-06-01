@@ -71,7 +71,7 @@
             [item]="item"
             [isUpdating]="updatingItemId() === item.product.id ? loadingSignal : falseSignal"
             (quantityChanged)="onQuantityChanged(item.product.id, $event, item.id)"
-            (removed)="onRemoveItem(item.product.id)"
+            (removed)="onRemoveItem(item.id)"
           />
         }
       </div>

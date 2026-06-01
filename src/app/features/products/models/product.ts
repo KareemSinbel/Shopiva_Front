@@ -15,6 +15,16 @@ export interface Product {
   createdAt?: Date | string;
 }
 
+export interface ProductCart
+{
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+  discountPrice?: number;
+  imageUrl?: string;
+}
+
 export interface ProductFilterDto {
   search?: string;
   categoryId?: number;

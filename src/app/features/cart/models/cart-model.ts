@@ -1,10 +1,10 @@
-import { Product } from '../../../features/products/models/product';
+import {ProductCart } from '../../../features/products/models/product';
 
 // A cart item is a product snapshot + quantity chosen by the user
 export interface CartItemModel {
   // quantity: number;
   id: number;
-  product: Product;
+  product: ProductCart;
   quantity: number;
   unitPrice: number;
   subtotal: number;

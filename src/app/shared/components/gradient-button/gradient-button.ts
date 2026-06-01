@@ -12,11 +12,11 @@ export class GradientButton {
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() btnClass: string = '';
   @Input() isHoverAnimated: boolean = true;
-  @Output() click = new EventEmitter<void>();
+  @Output() btnClick = new EventEmitter<void>();
 
   onClick() {
     if (!this.isDisabled) {
-      this.click.emit();
+      this.btnClick.emit();
     }
   }
 }

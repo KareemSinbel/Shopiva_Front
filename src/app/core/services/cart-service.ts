@@ -22,10 +22,10 @@ export class CartService {
   }
 
   updateItemQuantity(productId: number, quantity: number, cartItemId: number): Observable<CartApiResponse> {
-    return this.http.put<CartApiResponse>(`${this.apiConfig.baseUrl}${API_ENDPOINTS.cart.updateItemQuantity}`, { cartItemId,quantity });
+    return this.http.put<CartApiResponse>(`${this.apiConfig.baseUrl}${API_ENDPOINTS.cart.updateItemQuantity}`, { cartItemId, quantity});
   }
 
-  removeItem(productId: number): Observable<CartApiResponse> {
-    return this.http.delete<CartApiResponse>(`${this.apiConfig.baseUrl}${API_ENDPOINTS.cart.removeItem(productId)}`);
+  removeItem(cartItemId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiConfig.baseUrl}${API_ENDPOINTS.cart.removeItem(cartItemId)}`);
   }
 }

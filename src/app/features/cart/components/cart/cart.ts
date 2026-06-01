@@ -67,9 +67,7 @@ export class Cart implements OnInit, OnDestroy {
 
     this.cartService.getCart().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        console.log('Cart data loaded:', data);
         this.cartItems.set(data.items);
-        console.log('Cart items set:', this.cartItems());
         this.discountAmount.set(data.discountAmount ?? 0);
         this.isLoading.set(false);
       },
@@ -99,19 +97,13 @@ export class Cart implements OnInit, OnDestroy {
       });
   }
 
-  onRemoveItem(productId: number): void {
+  onRemoveItem(cartItemId: number): void {
     // Optimistic removal
-    this.cartItems.update(items => items.filter(i => i.product.id !== productId));
+    this.cartItems.update(items => items.filter(i => i.id !== cartItemId));
 
-    this.cartService.removeItem(productId)
+    this.cartService.removeItem(cartItemId)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.cartItems.set(data.items);
-          this.discountAmount.set(data.discountAmount ?? 0);
-        },
-        error: () => this.loadCart(), // revert on error
-      });
+      .subscribe({error:() => this.loadCart()});
   }
 
   // onPromoApplied(code: string): void {

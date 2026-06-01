@@ -45,6 +45,8 @@ export const routes: Routes = [
   {
     path: "seller",
     component: SellerLayout,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Seller'] },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: "dashboard", component: SellerDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Seller'] }, pathMatch: "full" },
@@ -62,7 +64,10 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        component: Dashboard
+        component: Dashboard,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin'] },
+        pathMatch: 'full'
       },
       {
         path: '',

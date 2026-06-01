@@ -33,13 +33,10 @@ export class ProductCard {
   addToCart(event: MouseEvent): void {
     //PREVENT CARD CLICK NAVIGATION
     event.stopPropagation();
-    this.cartService.addToCart(this.product.id, 1, this.product.discountPrice ?? this.product.price).subscribe(() =>{
-      console.log('Added successfully');
-    });
+    this.cartService.addToCart(this.product.id, 1, this.product.discountPrice ?? this.product.price).subscribe();
   }
 
   onCardClick(): void {
-    console.log('Card clicked, navigating to product details');
     this.router.navigate(['/product', this.product.id]);
   }
 

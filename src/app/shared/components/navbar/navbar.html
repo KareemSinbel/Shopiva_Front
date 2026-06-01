@@ -17,45 +17,12 @@
         </a>
       </li>
       <li>
-        <a routerLink="/luxury"
+        <a routerLink="/productlist"
           routerLinkActive="!text-secondary font-bold"
-          #luxuryLink="routerLinkActive"
+          #productlistLink="routerLinkActive"
           class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
-          Luxury
-          @if(luxuryLink.isActive) {
-            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
-          }
-        </a>
-      </li>
-      <li>
-        <a routerLink="/tech"
-          routerLinkActive="!text-secondary font-bold"
-          #techLink="routerLinkActive"
-          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
-          Tech
-          @if(techLink.isActive) {
-            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
-          }
-        </a>
-      </li>
-      <li>
-        <a routerLink="/limited"
-          routerLinkActive="!text-secondary font-bold"
-          #limitedLink="routerLinkActive"
-          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
-          Limited
-          @if(limitedLink.isActive) {
-            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
-          }
-        </a>
-      </li>
-      <li>
-        <a routerLink="/new-arrivals"
-          routerLinkActive="!text-secondary font-bold"
-          #newArrivalsLink="routerLinkActive"
-          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
-          New Arrivals
-          @if(newArrivalsLink.isActive) {
+          List
+          @if(productlistLink.isActive) {
             <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
           }
         </a>
@@ -106,6 +73,26 @@
                     My Profile
                   </a>
                 </li>
+                @if(userRole?.includes('Seller')) {
+                  <li>
+                    <a routerLink="/seller/dashboard"
+                      (click)="isDropdownOpen = false"
+                      class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-white/5 transition-colors">
+                      <span class="material-symbols-outlined text-[18px] text-primary">dashboard</span>
+                      Seller Dashboard
+                    </a>
+                  </li>
+                }
+                @else if (userRole?.includes('Admin')) {
+                  <li>
+                    <a routerLink="/admin/dashboard"
+                      (click)="isDropdownOpen = false"
+                      class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-white/5 transition-colors">
+                      <span class="material-symbols-outlined text-[18px] text-primary">dashboard</span>
+                      Admin Dashboard
+                    </a>
+                  </li>
+                }
                 <li>
                   <a routerLink="/orders"
                     (click)="isDropdownOpen = false"

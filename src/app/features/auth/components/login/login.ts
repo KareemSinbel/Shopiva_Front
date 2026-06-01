@@ -17,7 +17,12 @@ export class Login {
   isLoading: WritableSignal<boolean> = signal(false);
 
 
-  constructor(private _authService: AuthService, private _router: Router) { }
+  constructor(private _authService: AuthService, private _router: Router)
+  {
+    if (this._authService.isLoggedIn()) {
+      this._router.navigate(['/']);
+    }
+  }
 
 
   loginForm: FormGroup = new FormGroup({

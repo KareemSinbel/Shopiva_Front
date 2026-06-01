@@ -22,6 +22,10 @@ export class Navbar {
     return this.auth.currentUser.value;
   }
 
+  get userRole(): string | null {
+    return this.auth.getUserRole();
+  }
+
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }

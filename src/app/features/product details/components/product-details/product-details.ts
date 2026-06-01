@@ -1,0 +1,89 @@
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { ImageGalleryComponent } from '../image-gallery/image-gallery';
+import { StarRatingComponent } from '../star-rating/star-rating';
+import { QuantitySelectorComponent } from '../../../../shared/components/quantity-selector/quantity-selector';
+import { RelatedProductsComponent } from '../related-products/related-products';
+import { ProductService } from '../../../../core/services/product-service';
+import { Product } from '../../../products/models/product';
+import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
+import { CartService } from '../../../../core/services/cart-service';
+
+
+@Component({
+  selector: 'app-product-detail',
+  standalone: true,
+  imports: [
+    CurrencyPipe,
+    ImageGalleryComponent,
+    StarRatingComponent,
+    QuantitySelectorComponent,
+    RelatedProductsComponent,
+    GradientButton
+],
+  templateUrl: './product-details.html',
+  styleUrl: './product-details.css',
+})
+export class ProductDetailComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private productService = inject(ProductService);
+  private cartService = inject(CartService);
+  private readonly destroy$ = new Subject<void>();
+
+
+  readonly product = signal<Product | null>(null);
+  readonly isLoading = signal(false);
+  readonly error = signal<string | null>(null);
+  private quantity = 1;
+
+  readonly perks = [
+    { icon: 'local_shipping', title: 'Free Shipping',   subtitle: 'On all luxury orders' },
+    { icon: 'verified_user',  title: '2 Year Warranty', subtitle: 'Full coverage protection' },
+  ];
+
+  ngOnInit(): void {
+    // TODO: get product ID from route params:
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const id = Number(params.get('id'));
+      if (id) this.loadProduct(id);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadProduct(id: number): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.product.set(null);
+
+    this.productService.getProductById(id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data) => {
+        this.product.set(data);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to load product. Please try again.');
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+
+
+  onQuantityChange(qty: number): void {
+    this.quantity = qty;
+  }
+
+  addToCart(product: Product): void {
+    // TODO: dispatch to CartService or NgRx store
+    this.cartService.addToCart(this.product()!.id, 1, this.product()!.discountPrice ?? this.product()!.price).subscribe(() =>{
+      console.log('Added successfully');
+    });
+    console.log('Add to cart:', { productId: product.id, quantity: this.quantity });
+  }
+}

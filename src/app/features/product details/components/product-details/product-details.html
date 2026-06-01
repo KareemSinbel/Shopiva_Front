@@ -1,0 +1,80 @@
+<main class="pt-12 pb-margin-desktop px-margin-desktop max-w-container-max mx-auto">
+
+  @if (product(); as p) {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+
+      <div class="lg:col-span-7">
+        <!-- imageUrls from your model, not images -->
+        <app-image-gallery [images]="p.imageUrls" [altPrefix]="p.name" />
+      </div>
+
+      <div class="lg:col-span-5 space-y-8">
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-3 py-1 rounded-full">
+              {{ p.categoryName }}
+            </span>
+            <span class="text-outline font-label-sm text-label-sm">{{ p.sellerName }}</span>
+          </div>
+
+          <h1 class="font-display-lg text-headline-lg text-on-surface">{{ p.name }}</h1>
+
+          <!-- averageRating from your model -->
+          <app-star-rating [rating]="p.averageRating" />
+
+          <!-- discountPrice support -->
+          <div class="flex items-center gap-4">
+            <p class="font-display-lg text-headline-lg text-primary">
+              {{ (p.discountPrice ?? p.price) | currency }}
+            </p>
+            @if (p.discountPrice) {
+              <p class="font-body-lg text-body-lg text-outline line-through">
+                {{ p.price | currency }}
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="glass-card p-6 rounded-lg space-y-6">
+          <!-- stock: number, not boolean -->
+          <div class="flex items-center gap-3">
+            <span
+              class="material-symbols-outlined"
+              [class.text-tertiary]="p.stock > 0"
+              [class.text-error]="p.stock === 0"
+              style="font-variation-settings: 'FILL' 1;"
+            >
+              {{ p.stock > 0 ? 'check_circle' : 'cancel' }}
+            </span>
+            <span class="font-label-md text-label-md text-on-surface">
+              {{ p.stock > 0 ? 'In Stock — Ready to Ship Globally' : 'Currently Out of Stock' }}
+            </span>
+          </div>
+
+          <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            {{ p.description }}
+          </p>
+
+          <div class="flex gap-4">
+            <app-quantity-selector [min]="1" [max]="p.stock" (quantityChange)="onQuantityChange($event)" />
+            <app-gradient-button (click)="addToCart(p)" [isDisabled]="p.stock === 0" btnText="Add to Cart" class="flex-1"> </app-gradient-button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          @for (perk of perks; track perk.icon) {
+            <div class="glass-card p-4 rounded-lg flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary">{{ perk.icon }}</span>
+              <div class="flex flex-col">
+                <span class="font-label-md text-label-md">{{ perk.title }}</span>
+                <span class="text-label-sm text-on-surface-variant">{{ perk.subtitle }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <app-related-products [productId]="p.id" />
+  }
+</main>

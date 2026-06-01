@@ -1,0 +1,132 @@
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-white/10 dark:border-white/5 shadow-[0_8px_32px_0_rgba(0,62,199,0.08)]">
+  <nav class="flex items-center justify-between px-margin-desktop py-4 max-w-container-max mx-auto h-20">
+    <div class="flex items-center gap-4" routerLink="/home" role="button">
+      <img alt="Shopiva Brand" class="h-10 w-10 object-contain" src="assets/images/logo.png"/>
+      <span class="font-display-lg text-headline-md tracking-tighter text-primary dark:text-primary-fixed">Shopiva</span>
+    </div>
+    <ul class="hidden md:flex items-center gap-8 font-body-md text-body-md">
+      <li>
+        <a routerLink="/home"
+          routerLinkActive="!text-secondary font-bold"
+          #homeLink="routerLinkActive"
+          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
+          Collections
+          @if(homeLink.isActive) {
+            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
+          }
+        </a>
+      </li>
+      <li>
+        <a routerLink="/luxury"
+          routerLinkActive="!text-secondary font-bold"
+          #luxuryLink="routerLinkActive"
+          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
+          Luxury
+          @if(luxuryLink.isActive) {
+            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
+          }
+        </a>
+      </li>
+      <li>
+        <a routerLink="/tech"
+          routerLinkActive="!text-secondary font-bold"
+          #techLink="routerLinkActive"
+          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
+          Tech
+          @if(techLink.isActive) {
+            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
+          }
+        </a>
+      </li>
+      <li>
+        <a routerLink="/limited"
+          routerLinkActive="!text-secondary font-bold"
+          #limitedLink="routerLinkActive"
+          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
+          Limited
+          @if(limitedLink.isActive) {
+            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
+          }
+        </a>
+      </li>
+      <li>
+        <a routerLink="/new-arrivals"
+          routerLinkActive="!text-secondary font-bold"
+          #newArrivalsLink="routerLinkActive"
+          class="relative text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors">
+          New Arrivals
+          @if(newArrivalsLink.isActive) {
+            <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-secondary rounded-full"></span>
+          }
+        </a>
+      </li>
+    </ul>
+    <div class="flex items-center gap-4">
+      <button class="p-2 rounded-full hover:bg-white/10 transition-all active:scale-95">
+        <span class="material-symbols-outlined text-primary">shopping_cart</span>
+      </button>
+      <button class="p-2 rounded-full hover:bg-white/10 transition-all active:scale-95">
+        <span class="material-symbols-outlined text-primary">notifications</span>
+      </button>
+      <div id="user-menu-wrapper" class="relative">
+        @if (!isLoggedIn) {
+          <button
+            routerLink="/login"
+            class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-on-primary text-sm font-semibold hover:opacity-90 transition-all active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">login</span>
+            Login
+          </button>
+        }
+        @else
+        {
+          <button
+            (click)="toggleDropdown()"
+            class="p-2 rounded-full hover:bg-white/10 transition-all active:scale-95 relative">
+            <span class="material-symbols-outlined text-primary">person</span>
+            <!-- Optional online dot -->
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-green-400 rounded-full border-2 border-surface"></span>
+          </button>
+
+          <!-- Dropdown -->
+          @if (isDropdownOpen) {
+            <div class="absolute right-0 mt-2 w-52 rounded-2xl bg-surface dark:bg-surface-container border border-white/10 shadow-xl shadow-black/20 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <!-- User info header -->
+              <div class="px-4 py-3 border-b border-white/10">
+                <p class="text-sm font-semibold text-on-surface">{{ user?.given_name }}</p>
+                <p class="text-xs text-on-surface-variant truncate">{{ user?.email }}</p>
+              </div>
+
+              <!-- Menu items -->
+              <ul class="py-1">
+                <li>
+                  <a routerLink="/profile"
+                    (click)="isDropdownOpen = false"
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-white/5 transition-colors">
+                    <span class="material-symbols-outlined text-[18px] text-primary">manage_accounts</span>
+                    My Profile
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="/orders"
+                    (click)="isDropdownOpen = false"
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-white/5 transition-colors">
+                    <span class="material-symbols-outlined text-[18px] text-primary">receipt_long</span>
+                    My Orders
+                  </a>
+                </li>
+                <li class="border-t border-white/10 mt-1">
+                  <button
+                    (click)="logout()"
+                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-error hover:bg-error/10 transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </nav>
+</header>

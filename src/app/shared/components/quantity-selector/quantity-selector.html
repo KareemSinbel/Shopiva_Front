@@ -1,0 +1,21 @@
+<div class="flex items-center bg-surface-container-low rounded-lg p-1 border border-outline-variant/30">
+  <button
+    (click)="decrement()"
+    [disabled]="quantity() <= min"
+    class="p-2 hover:bg-white/50 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+    aria-label="Decrease quantity"
+  >
+    <span class="material-symbols-outlined text-sm">remove</span>
+  </button>
+  <span class="px-6 font-headline-md text-headline-md min-w-[3rem] text-center">
+    {{ quantity() }}
+  </span>
+  <button
+    (click)="increment()"
+    [disabled]="quantity() >= max"
+    class="p-2 hover:bg-white/50 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+    aria-label="Increase quantity"
+  >
+    <span class="material-symbols-outlined text-sm">add</span>
+  </button>
+</div>

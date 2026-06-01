@@ -1,0 +1,188 @@
+<div class="flex flex-col md:flex-row gap-gutter px-6 max-w-container-max mx-auto py-5">
+  <!-- Filters Sidebar -->
+  <aside class="w-full md:w-64 shrink-0">
+    <div class="glass-card rounded-lg p-6 sticky top-28 space-y-8">
+      <!-- Search Filter -->
+      <div>
+        <h3 class="font-headline-md text-label-md uppercase tracking-widest text-outline mb-4">Search</h3>
+        <input
+          class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-surface text-on-surface"
+          type="text" placeholder="Search products..." [(ngModel)]="filter.search"
+          (change)="onSearchChange(filter.search || '')" />
+      </div>
+
+      <!-- Categories Filter -->
+      <div>
+        <h3 class="font-headline-md text-label-md uppercase tracking-widest text-outline mb-4">Categories</h3>
+        <div class="space-y-3">
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input class="rounded border-outline-variant text-primary focus:ring-primary w-5 h-5" type="radio"
+              name="category" [value]="undefined" [(ngModel)]="filter.categoryId"
+              (change)="onCategoryChange(filter.categoryId)" />
+            <span class="text-body-md group-hover:text-primary transition-colors">All Categories</span>
+          </label>
+          @for (category of categories; track category.id) {
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input class="rounded border-outline-variant text-primary focus:ring-primary w-5 h-5" type="radio"
+              name="category" [value]="category.id" [(ngModel)]="filter.categoryId"
+              (change)="onCategoryChange(filter.categoryId)" />
+            <span class="text-body-md transition-colors" [class.text-primary]="isCategorySelected(category.id)"
+              [class.font-medium]="isCategorySelected(category.id)"
+              [class.group-hover:text-primary]="!isCategorySelected(category.id)">
+              {{ category.name }}
+            </span>
+          </label>
+          }
+        </div>
+      </div>
+
+      <!-- Price Range Filter -->
+      <div>
+        <h3 class="font-headline-md text-label-md uppercase tracking-widest text-outline mb-4">Price Range</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="text-label-sm text-outline block mb-2">Min Price: ${{ minPriceInput }}</label>
+            <input
+              class="w-full h-1.5 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"
+              type="range" min="0" max="5000" step="50" [(ngModel)]="minPriceInput"
+              (change)="onPriceRangeChange(minPriceInput, maxPriceInput)" />
+          </div>
+          <div>
+            <label class="text-label-sm text-outline block mb-2">Max Price: ${{ maxPriceInput }}</label>
+            <input
+              class="w-full h-1.5 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"
+              type="range" min="0" max="5000" step="50" [(ngModel)]="maxPriceInput"
+              (change)="onPriceRangeChange(minPriceInput, maxPriceInput)" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock Filter -->
+      <div>
+        <label class="flex items-center gap-3 cursor-pointer group">
+          <input class="rounded border-outline-variant text-primary focus:ring-primary w-5 h-5" type="checkbox"
+            [(ngModel)]="filter.inStock" (change)="onStockFilterChange(filter.inStock || false)" />
+          <span class="text-body-md group-hover:text-primary transition-colors">In Stock Only</span>
+        </label>
+      </div>
+
+      <!-- Clear Filters Button -->
+      <button
+        class="w-full py-4 bg-primary text-on-primary rounded-full font-label-md hover:shadow-lg transition-shadow active:scale-95"
+        (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+  </aside>
+
+  <!-- Product Listing -->
+  <section class="flex-1">
+    <!-- Header -->
+    <div class="flex items-end justify-between mb-8 flex-wrap gap-4">
+      <div>
+        <h1 class="font-display-lg text-headline-lg text-on-surface">Products</h1>
+        <p class="text-on-surface-variant text-body-md mt-2">
+          Showing {{ isLoading ? 0 : (products$ | async)?.length || 0 }} of {{ totalCount }} products
+        </p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-label-sm text-outline font-label-md uppercase">Sort By:</span>
+        <select class="bg-transparent border-none font-label-md text-on-surface focus:ring-0 cursor-pointer"
+          [(ngModel)]="filter.sortBy" (change)="onSortChange(filter.sortBy || 'createdAt')">
+          @for (sort of SORT_OPTIONS; track sort.value) {
+          <option [value]="sort.value">{{ sort.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Page Size Selector -->
+    <div class="mb-6 flex items-center gap-4">
+      <span class="text-label-sm text-outline font-label-md">Items per page:</span>
+      <select
+        class="bg-surface-container-high border border-outline-variant px-3 py-2 rounded-lg font-label-md text-on-surface cursor-pointer"
+        [(ngModel)]="filter.pageSize" (change)="onPageSizeChange(filter.pageSize || 10)">
+        @for (size of PAGE_SIZE_OPTIONS; track size) {
+        <option [ngValue]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading) {
+    <div class="flex justify-center items-center min-h-96">
+      <div class="flex flex-col items-center gap-4">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <p class="text-on-surface-variant text-body-md">Loading products...</p>
+      </div>
+    </div>
+    }
+
+
+    <!-- Products Grid -->
+    @if (!isLoading) {
+    @if (products$ | async; as products) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Product Cards -->
+      @for (product of products; track product.id) {
+      <app-product-card [product]="product"></app-product-card>
+      }
+    </div>
+    }
+    }
+
+    <!-- Empty State -->
+    @if ((products$ | async); as products) {
+    @if (!isLoading && products.length === 0) {
+    <div class="flex flex-col items-center justify-center min-h-96">
+      <span class="material-symbols-outlined text-6xl text-outline mb-4">inbox</span>
+      <p class="text-on-surface-variant text-body-lg mb-2">No products found</p>
+      <p class="text-on-surface-variant text-body-md">Try adjusting your filters or search term</p>
+      <button
+        class="mt-6 px-6 py-3 bg-primary text-on-primary rounded-lg font-label-md hover:shadow-lg transition-shadow"
+        (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+    }
+    }
+
+    @if (!isLoading && totalPages > 1) {
+    <!-- Pagination -->
+    <div class="mt-16 flex flex-col items-center gap-6">
+      <!-- Page Buttons -->
+      <div class="flex justify-center gap-2 flex-wrap">
+        <!-- Previous Button -->
+        <button
+          class="w-12 h-12 flex items-center justify-center rounded-full glass-card hover:bg-primary hover:text-on-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="isPrevDisabled" (click)="prevPage()">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+
+        <!-- Page Number Buttons -->
+        @for (page of pageNumbers; track page) {
+        <button class="w-12 h-12 flex items-center justify-center rounded-full font-label-md transition-all"
+          [class.bg-primary]="page === currentPage" [class.text-on-primary]="page === currentPage"
+          [class.glass-card]="page !== currentPage" [class.hover:bg-surface-container]="page !== currentPage"
+          (click)="onPageChange(page)">
+          {{ page }}
+        </button>
+        }
+
+        <!-- Next Button -->
+        <button
+          class="w-12 h-12 flex items-center justify-center rounded-full glass-card hover:bg-primary hover:text-on-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="isNextDisabled" (click)="nextPage()">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+
+      <!-- Page Info -->
+      <p class="text-label-sm text-on-surface-variant">
+        Page {{ currentPage }} of {{ totalPages }}
+      </p>
+    </div>
+    }
+
+  </section>
+</div>

@@ -1,0 +1,115 @@
+<main class="grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-5 relative overflow-hidden">
+  <div class="w-full max-w-xl z-10">
+
+    <div class="glass-card rounded-xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/20">
+      <!-- <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Create Account</h2>
+      <p class="font-body-md text-on-surface-variant mb-8">Join the Shopiva tech-luxe collective.</p> -->
+      <div class="space-y-6">
+        <div class="flex space-x-8 mb-10 border-b border-outline-variant/30">
+          <button routerLink="/login"
+            class=" pb-4 font-headline-md text-headline-md text-on-surface-variant hover:text-on-surface transition-colors">Login</button>
+
+          <button
+            class="pb-4 border-b-2 border-secondary font-headline-md text-headline-md text-on-surface ">Register</button>
+        </div>
+        <!-- Login Form Section -->
+        <form class="space-y-6" [formGroup]="registerForm" (ngSubmit)="submitForm()">
+          <div>
+            <label class="block font-label-md text-label-md text-on-surface-variant mb-2">First Name</label>
+            <input formControlName="firstName"
+              class="sunken-input w-full px-4 py-3.5 rounded-lg bg-white/50 border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+              placeholder="John" type="text">
+          </div>
+          @if(registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched){
+
+          <div class="text-red-500 text-sm">
+            First Name is required.
+          </div>
+          }
+
+          <div>
+            <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Last Name</label>
+            <input formControlName="lastName"
+              class="sunken-input w-full px-4 py-3.5 rounded-lg bg-white/50 border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+              placeholder="Doe" type="text">
+          </div>
+          @if(registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched){
+          <div class="text-red-500 text-sm">
+            Last Name is required.
+          </div>
+          }
+          <div>
+            <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Phone Number</label>
+            <input formControlName="phoneNumber"
+              class="sunken-input w-full px-4 py-3.5 rounded-lg bg-white/50 border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+              placeholder="123-456-7890" type="tel">
+          </div>
+          @if(registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched){
+          <div class="text-red-500 text-sm">
+            Please enter a valid phone number.
+          </div>
+          }
+          <div>
+            <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Email Address</label>
+            <input formControlName="email"
+              class="sunken-input w-full px-4 py-3.5 rounded-lg bg-white/50 border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+              placeholder="name@luxury.com" type="email">
+          </div>
+          @if(registerForm.get('email')?.invalid && registerForm.get('email')?.touched){
+          <div class="text-red-500 text-sm">
+            Please enter a valid email address.
+          </div>
+          }
+          <div>
+            <div class="flex justify-between mb-2">
+              <label class="block font-label-md text-label-md text-on-surface-variant">Password</label>
+
+            </div>
+            <input formControlName="password"
+              class="sunken-input w-full px-4 py-3.5 rounded-lg bg-white/50 border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+              placeholder="••••••••" type="password">
+          </div>
+          @if(registerForm.get('password')?.invalid && registerForm.get('password')?.touched){
+          <div class="text-red-500 text-sm">
+            Password is required.
+          </div>
+          }
+          <div>
+            <div class="flex justify-between mb-2">
+              <label class="block font-label-md text-label-md text-on-surface-variant">Confirm Password</label>
+            </div>
+            <input formControlName="confirmPassword"
+              class="sunken-input w-full px-4 py-3.5 rounded-lg bg-white/50 border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+              placeholder="••••••••" type="password">
+          </div>
+          @if(registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched){
+          <div class="text-red-500 text-sm">
+            Confirm Password is required.
+          </div>
+          }
+          @if (registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched) {
+          <div class="text-red-500 text-sm">
+            Passwords do not match.
+          </div>
+          }
+          <button [disabled]="registerForm.invalid"
+            [ngClass]="registerForm.invalid?'bg-gray-700' : 'btn-primary-gradient'"
+            class="w-full text-on-primary py-4 rounded-lg font-label-md text-label-md uppercase tracking-widest transition-all"
+            type="submit">
+            @if(isLoading()){
+            <span class="material-symbols-outlined spin-loader"> refresh</span>
+            }
+            Register Now
+          </button>
+          @if(errorMessage()){
+
+          <div class="  text-red-500 text-sm">
+            {{ errorMessage() }}
+          </div>
+          }
+        </form>
+
+      </div>
+    </div>
+  </div>
+</main>

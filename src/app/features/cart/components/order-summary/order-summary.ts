@@ -2,10 +2,11 @@ import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderSummaryModel } from '../../models/cart-model';
+import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 
 @Component({
   selector: 'app-order-summary',
-  imports: [CurrencyPipe, FormsModule],
+  imports: [CurrencyPipe, FormsModule, GradientButton],
   templateUrl: './order-summary.html',
   styleUrl: './order-summary.css',
 })

@@ -21,8 +21,8 @@ export class CartService {
     return this.http.get<CartApiResponse>(`${this.apiConfig.baseUrl}${API_ENDPOINTS.cart.get}`);
   }
 
-  updateItemQuantity(productId: number, quantity: number): Observable<CartApiResponse> {
-    return this.http.patch<CartApiResponse>(`${this.apiConfig.baseUrl}${API_ENDPOINTS.cart.updateItemQuantity(productId)}`, { quantity });
+  updateItemQuantity(productId: number, quantity: number, cartItemId: number): Observable<CartApiResponse> {
+    return this.http.put<CartApiResponse>(`${this.apiConfig.baseUrl}${API_ENDPOINTS.cart.updateItemQuantity}`, { cartItemId,quantity });
   }
 
   removeItem(productId: number): Observable<CartApiResponse> {

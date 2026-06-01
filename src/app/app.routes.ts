@@ -31,7 +31,8 @@ export const routes: Routes = [
         { path: "home", component: Home, pathMatch: "full" },
         { path: "product/:id", component: ProductDetailComponent, pathMatch: "full" },
         { path: "productlist", component: ProductList, pathMatch: "full" },
-        { path: "cart", component: Cart, pathMatch: "full" }
+        { path: "cart", component: Cart, pathMatch: "full" },
+        { path: 'payment', component: Payment, pathMatch: "full" },
       ]
   },
   { path: "login", component: Login, pathMatch: "full" },
@@ -69,8 +70,6 @@ export const routes: Routes = [
       }
     ]
   },
-  { path: 'payment', component: Payment },
-
   { path: '**', redirectTo: 'home' }
 ];
 

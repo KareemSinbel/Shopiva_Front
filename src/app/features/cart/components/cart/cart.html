@@ -70,7 +70,7 @@
           <app-cart-item
             [item]="item"
             [isUpdating]="updatingItemId() === item.product.id ? loadingSignal : falseSignal"
-            (quantityChanged)="onQuantityChanged(item.product.id, $event)"
+            (quantityChanged)="onQuantityChanged(item.product.id, $event, item.id)"
             (removed)="onRemoveItem(item.product.id)"
           />
         }

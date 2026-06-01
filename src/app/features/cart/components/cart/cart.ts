@@ -67,7 +67,9 @@ export class Cart implements OnInit, OnDestroy {
 
     this.cartService.getCart().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
+        console.log('Cart data loaded:', data);
         this.cartItems.set(data.items);
+        console.log('Cart items set:', this.cartItems());
         this.discountAmount.set(data.discountAmount ?? 0);
         this.isLoading.set(false);
       },
@@ -76,19 +78,12 @@ export class Cart implements OnInit, OnDestroy {
         this.isLoading.set(false);
       },
     });
-
-    // ── Mock (remove once API is wired) ────────────────────────────────
-    // setTimeout(() => {
-    //   this.cartItems.set([...]);
-    //   this.isLoading.set(false);
-    // }, 0);
-    // ────────────────────────────────────────────────────────────────────
   }
 
-  onQuantityChanged(productId: number, quantity: number): void {
+  onQuantityChanged(productId: number, quantity: number, cartItemId: number): void {
     this.updatingItemId.set(productId);
 
-    this.cartService.updateItemQuantity(productId, quantity)
+    this.cartService.updateItemQuantity(productId, quantity, cartItemId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -136,7 +131,7 @@ export class Cart implements OnInit, OnDestroy {
 
   onCheckout(): void {
     // TODO: navigate to shipping step
-    this.router.navigate(['/checkout/shipping']);
+    this.router.navigate(['/payment']);
   }
 
   continueShopping(): void {

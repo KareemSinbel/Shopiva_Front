@@ -20,7 +20,10 @@ export const API_ENDPOINTS = {
     addToCart: '/cart/items',
     create: '/cart/items',
     removeItem: (id: number) => `/cart/items/${id}`,
-    updateItemQuantity: (id: number) => `/cart/items/${id}`,
-  }
+    updateItemQuantity: `/cart/items`,
+  },
 
+  payment:{
+    createIntent: '/payments/create-intent',
+  }
 };

@@ -2,6 +2,7 @@ import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../../products/models/product';
 import { ProductService } from '../../../../core/services/product-service';
+import { Route, Router } from '@angular/router';
 
 
 @Component({
@@ -19,6 +20,8 @@ export class RelatedProductsComponent implements OnInit {
   readonly products = signal<Product[]>([]);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.loadRelated();
@@ -53,7 +56,6 @@ export class RelatedProductsComponent implements OnInit {
 
   navigateToProduct(id: number): void {
     // TODO: inject Router and navigate to product detail route
-    // this.router.navigate(['/product', id]);
-    console.log('navigate to product:', id);
+    this.router.navigate(['/product', id]);
   }
 }

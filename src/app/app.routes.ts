@@ -19,6 +19,7 @@ import { ProductForm } from './features/seller-dashboard/components/product-form
 import { ProductDetailComponent } from './features/product details/components/product-details/product-details';
 import { ProductList } from './features/product-list/product-list';
 import { Payment } from './features/payment/pages/payment/payment';
+import { Cart } from './features/cart/components/cart/cart';
 
 export const routes: Routes = [
   {
@@ -29,7 +30,9 @@ export const routes: Routes = [
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         { path: "home", component: Home, pathMatch: "full" },
         { path: "product/:id", component: ProductDetailComponent, pathMatch: "full" },
-        { path: "productlist", component: ProductList, pathMatch: "full" }
+        { path: "productlist", component: ProductList, pathMatch: "full" },
+        { path: "cart", component: Cart, pathMatch: "full" },
+        { path: 'payment', component: Payment, pathMatch: "full" },
       ]
   },
   { path: "login", component: Login, pathMatch: "full" },
@@ -67,8 +70,6 @@ export const routes: Routes = [
       }
     ]
   },
-  { path: 'payment', component: Payment },
-
   { path: '**', redirectTo: 'home' }
 ];
 

@@ -6,8 +6,5 @@ import { environment } from '../../../environments/environment';
 })
 export class ApiConfig {
   readonly baseUrl = environment.api.baseUrl;
-<<<<<<< Updated upstream
-=======
   readonly stripePublishableKey = ""
->>>>>>> Stashed changes
 }

@@ -58,46 +58,34 @@ export class ProductForm implements OnInit {
     this.categoriesLoading.set(true);
     this.categoriesError.set(null);
 
-    this.sellerService
-      .getCategories()
-      .then((data) => {
+    this.sellerService.getCategories().subscribe({
+      next: (data) => {
         this.categories.set(data);
         this.categoriesLoading.set(false);
-      })
-      .catch((err) => {
+      },
+      error: (err) => {
         this.categoriesError.set('Failed to load categories.');
         this.categoriesLoading.set(false);
         console.error(err);
-      });
+      },
+    });
   }
-
   private loadProduct(id: number): void {
     this.loading = true;
     this.error = null;
 
-    this.sellerService
-      .getProductById(id)
-      .then((product) => {
+    this.sellerService.getProductById(id).subscribe({
+      next: (product) => {
         this.currentProduct = product;
         this.existingImageUrls = product.imageUrls || [];
         this.populateForm(product);
         this.loading = false;
-      })
-      .catch((err) => {
+      },
+      error: (err) => {
         this.error = 'Failed to load product. Please try again.';
         this.loading = false;
         console.error(err);
-      });
-  }
-
-  private populateForm(product: SellerProductSummaryDto): void {
-    this.productForm.patchValue({
-      name: product.name,
-      description: product.description || '',
-      price: product.price,
-      discountedPrice: product.discountedPrice || '',
-      stock: product.stock,
-      categoryId: product.categoryId || '',
+      },
     });
   }
 
@@ -156,30 +144,20 @@ export class ProductForm implements OnInit {
     this.error = null;
 
     const formData = this.buildFormData();
+    const request$ = this.isEditMode && this.productId
+      ? this.sellerService.updateProduct(this.productId, formData)
+      : this.sellerService.createProduct(formData);
 
-    if (this.isEditMode && this.productId) {
-      this.sellerService
-        .updateProduct(this.productId, formData)
-        .then(() => {
-          this.router.navigate(['/seller/inventory']);
-        })
-        .catch((err) => {
-          this.error = 'Failed to update product. Please try again.';
-          this.loading = false;
-          console.error(err);
-        });
-    } else {
-      this.sellerService
-        .createProduct(formData)
-        .then(() => {
-          this.router.navigate(['/seller/inventory']);
-        })
-        .catch((err) => {
-          this.error = 'Failed to create product. Please try again.';
-          this.loading = false;
-          console.error(err);
-        });
-    }
+    request$.subscribe({
+      next: () => this.router.navigate(['/seller/inventory']),
+      error: (err) => {
+        this.error = this.isEditMode
+          ? 'Failed to update product. Please try again.'
+          : 'Failed to create product. Please try again.';
+        this.loading = false;
+        console.error(err);
+      },
+    });
   }
 
   private buildFormData(): FormData {
@@ -212,6 +190,17 @@ export class ProductForm implements OnInit {
     }
 
     return formData;
+  }
+
+  private populateForm(product: SellerProductSummaryDto): void {
+    this.productForm.patchValue({
+      name: product.name,
+      description: product.description || '',
+      price: product.price,
+      discountedPrice: product.discountedPrice || '',
+      stock: product.stock,
+      categoryId: product.categoryId || '',
+    });
   }
 
   cancel(): void {

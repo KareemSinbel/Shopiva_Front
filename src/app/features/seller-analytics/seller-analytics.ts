@@ -16,7 +16,7 @@ export class SellerAnalytics implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
 
-  constructor(private sellerService: SellerService, private router: Router) { }
+  constructor(private sellerService: SellerService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadAnalytics();
@@ -26,17 +26,17 @@ export class SellerAnalytics implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.sellerService
-      .getDashboard()
-      .then((data) => {
+    this.sellerService.getDashboard().subscribe({
+      next: (data) => {
         this.dashboardData.set(data);
         this.loading.set(false);
-      })
-      .catch((err) => {
+      },
+      error: (err) => {
         this.error.set('Failed to load analytics. Please try again.');
         this.loading.set(false);
         console.error(err);
-      });
+      },
+    });
   }
 
   onAddProduct(): void {

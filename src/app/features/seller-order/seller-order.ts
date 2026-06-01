@@ -27,7 +27,7 @@ export class SellerOrder implements OnInit {
 
   orderStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered'];
 
-  constructor(private sellerService: SellerService) { }
+  constructor(private sellerService: SellerService) {}
 
   ngOnInit(): void {
     this.loadOrders();
@@ -38,29 +38,25 @@ export class SellerOrder implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.sellerService
-      .getOrders(this.filter())
-      .then((data: PaginatedResult<SellerOrderSummaryDto>) => {
+    this.sellerService.getOrders(this.filter()).subscribe({
+      next: (data: PaginatedResult<SellerOrderSummaryDto>) => {
         this.orders.set(data.items);
         this.totalCount.set(data.totalCount);
         this.loading.set(false);
-      })
-      .catch((err) => {
+      },
+      error: (err) => {
         this.error.set('Failed to load orders. Please try again.');
         this.loading.set(false);
         console.error(err);
-      });
+      },
+    });
   }
 
   private loadDashboard(): void {
-    this.sellerService
-      .getDashboard()
-      .then((data) => {
-        this.dashboardData.set(data);
-      })
-      .catch((err) => {
-        console.error('Failed to load dashboard:', err);
-      });
+    this.sellerService.getDashboard().subscribe({
+      next: (data) => this.dashboardData.set(data),
+      error: (err) => console.error('Failed to load dashboard:', err),
+    });
   }
 
   onStatusFilter(status: string): void {

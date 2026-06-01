@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 import {
   SellerDashboardDto,
   SellerProductSummaryDto,
@@ -17,62 +20,37 @@ import {
 export class SellerService {
   private baseUrl = 'https://localhost:7259/api/seller';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  /**
-   * Fetch seller dashboard statistics
-   */
-  getDashboard(): Promise<SellerDashboardDto> {
-    return this.http
-      .get<SellerDashboardDto>(`${this.baseUrl}/dashboard`)
-      .toPromise()
-      .then((data) => {
-        if (!data) throw new Error('No dashboard data received');
-        return data;
-      })
-      .catch((err) => {
+  getDashboard(): Observable<SellerDashboardDto> {
+    return this.http.get<SellerDashboardDto>(`${this.baseUrl}/dashboard`).pipe(
+      catchError((err) => {
         console.error('Error fetching dashboard:', err);
-        throw err;
-      });
+        return throwError(() => err);
+      })
+    );
   }
 
-  /**
-   * Fetch categories from API
-   */
-  getCategories(): Promise<any[]> {
+  getCategories(): Observable<any[]> {
     return this.http
       .get<any[]>('https://localhost:7259/api/Category')
-      .toPromise()
-      .then((data) => {
-        if (!data) throw new Error('No categories received');
-        return data;
-      })
-      .catch((err) => {
-        console.error('Error fetching categories:', err);
-        throw err;
-      });
+      .pipe(
+        catchError((err) => {
+          console.error('Error fetching categories:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
-  /**
-   * Fetch seller's products with filtering and pagination
-   */
   getProducts(
     filter: SellerProductFilterDto
-  ): Promise<PaginatedResult<SellerProductSummaryDto>> {
+  ): Observable<PaginatedResult<SellerProductSummaryDto>> {
     let params = new HttpParams();
 
-    if (filter.search) {
-      params = params.set('search', filter.search);
-    }
-    if (filter.categoryId) {
-      params = params.set('categoryId', filter.categoryId.toString());
-    }
-    if (filter.isActive !== undefined) {
-      params = params.set('isActive', filter.isActive.toString());
-    }
-    if (filter.inStock !== undefined) {
-      params = params.set('inStock', filter.inStock.toString());
-    }
+    if (filter.search) params = params.set('search', filter.search);
+    if (filter.categoryId) params = params.set('categoryId', filter.categoryId.toString());
+    if (filter.isActive !== undefined) params = params.set('isActive', filter.isActive.toString());
+    if (filter.inStock !== undefined) params = params.set('inStock', filter.inStock.toString());
 
     params = params.set('sortBy', filter.sortBy);
     params = params.set('descending', filter.descending.toString());
@@ -80,119 +58,76 @@ export class SellerService {
     params = params.set('pageSize', filter.pageSize.toString());
 
     return this.http
-      .get<PaginatedResult<SellerProductSummaryDto>>(
-        `${this.baseUrl}/products`,
-        { params }
-      )
-      .toPromise()
-      .then((data) => {
-        if (!data) throw new Error('No products data received');
-        return data;
-      })
-      .catch((err) => {
-        console.error('Error fetching products:', err);
-        throw err;
-      });
+      .get<PaginatedResult<SellerProductSummaryDto>>(`${this.baseUrl}/products`, { params })
+      .pipe(
+        catchError((err) => {
+          console.error('Error fetching products:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
-  /**
-   * Fetch seller's orders with filtering and pagination
-   */
   getOrders(
     filter: SellerOrderFilterDto
-  ): Promise<PaginatedResult<SellerOrderSummaryDto>> {
+  ): Observable<PaginatedResult<SellerOrderSummaryDto>> {
     let params = new HttpParams();
 
-    if (filter.status) {
-      params = params.set('status', filter.status);
-    }
-
+    if (filter.status) params = params.set('status', filter.status);
     params = params.set('page', filter.page.toString());
     params = params.set('pageSize', filter.pageSize.toString());
 
     return this.http
-      .get<PaginatedResult<SellerOrderSummaryDto>>(
-        `${this.baseUrl}/orders`,
-        { params }
-      )
-      .toPromise()
-      .then((data) => {
-        if (!data) throw new Error('No orders data received');
-        return data;
-      })
-      .catch((err) => {
-        console.error('Error fetching orders:', err);
-        throw err;
-      });
+      .get<PaginatedResult<SellerOrderSummaryDto>>(`${this.baseUrl}/orders`, { params })
+      .pipe(
+        catchError((err) => {
+          console.error('Error fetching orders:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
-  /**
-   * Get a single product by ID
-   */
-  getProductById(id: number): Promise<SellerProductSummaryDto> {
+  getProductById(id: number): Observable<SellerProductSummaryDto> {
     return this.http
       .get<SellerProductSummaryDto>(`${this.baseUrl}/products/${id}`)
-      .toPromise()
-      .then((data) => {
-        if (!data) throw new Error('No product data received');
-        return data;
-      })
-      .catch((err) => {
-        console.error('Error fetching product:', err);
-        throw err;
-      });
+      .pipe(
+        catchError((err) => {
+          console.error('Error fetching product:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
-  /**
-   * Create a new product
-   */
-  createProduct(formData: FormData): Promise<SellerProductSummaryDto> {
-    const baseUrl = 'https://localhost:7259/api/Products';
+  createProduct(formData: FormData): Observable<SellerProductSummaryDto> {
     return this.http
-      .post<SellerProductSummaryDto>(baseUrl, formData)
-      .toPromise()
-      .then((data) => {
-        if (!data) throw new Error('No product data received');
-        return data;
-      })
-      .catch((err) => {
-        console.error('Error creating product:', err);
-        throw err;
-      });
+      .post<SellerProductSummaryDto>('https://localhost:7259/api/Products', formData)
+      .pipe(
+        catchError((err) => {
+          console.error('Error creating product:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
-  /**
-   * Update an existing product
-   */
-  updateProduct(id: number, formData: FormData): Promise<SellerProductSummaryDto> {
-    const baseUrl = 'https://localhost:7259/api/Products';
+  updateProduct(id: number, formData: FormData): Observable<SellerProductSummaryDto> {
     return this.http
-      .put<SellerProductSummaryDto>(`${baseUrl}/${id}`, formData)
-      .toPromise()
-      .then((data) => {
-        if (!data) throw new Error('No product data received');
-        return data;
-      })
-      .catch((err) => {
-        console.error('Error updating product:', err);
-        throw err;
-      });
+      .put<SellerProductSummaryDto>(`https://localhost:7259/api/Products/${id}`, formData)
+      .pipe(
+        catchError((err) => {
+          console.error('Error updating product:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
-  /**
-   * Delete a product
-   */
-  deleteProduct(id: number): Promise<void> {
-    const baseUrl = 'https://localhost:7259/api/Products';
+  deleteProduct(id: number): Observable<void> {
     return this.http
-      .delete<void>(`${baseUrl}/${id}`)
-      .toPromise()
-      .then(() => {
-        console.log('Product deleted successfully');
-      })
-      .catch((err) => {
-        console.error('Error deleting product:', err);
-        throw err;
-      });
+      .delete<void>(`https://localhost:7259/api/Products/${id}`)
+      .pipe(
+        tap(() => console.log('Product deleted successfully')),
+        catchError((err) => {
+          console.error('Error deleting product:', err);
+          return throwError(() => err);
+        })
+      );
   }
 }

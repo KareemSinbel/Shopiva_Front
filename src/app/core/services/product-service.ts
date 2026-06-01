@@ -56,6 +56,6 @@ export class ProductService {
   }
 
   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.apiConfig.baseUrl}/categories`);
+    return this.http.get<Category[]>(`${this.apiConfig.baseUrl}/Category`);
   }
 }

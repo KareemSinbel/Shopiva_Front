@@ -18,6 +18,7 @@ import { SellerAnalytics } from './features/seller-analytics/seller-analytics';
 import { ProductForm } from './features/seller-dashboard/components/product-form/product-form';
 import { ProductDetailComponent } from './features/product details/components/product-details/product-details';
 import { ProductList } from './features/product-list/product-list';
+import { Payment } from './features/payment/pages/payment/payment';
 
 export const routes: Routes = [
   {
@@ -66,6 +67,7 @@ export const routes: Routes = [
       }
     ]
   },
+  { path: 'payment', component: Payment },
 
   { path: '**', redirectTo: 'home' }
 ];

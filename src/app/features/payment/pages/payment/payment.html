@@ -1,0 +1,235 @@
+<!-- Success Screen -->
+@if (paymentSuccess) {
+  <div class="success-screen">
+    <div class="success-card">
+      <div class="success-icon">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <h2>Payment Successful!</h2>
+      <p>Your order has been confirmed. You'll receive a confirmation email shortly.</p>
+      <button class="btn-primary" routerLink="/">Continue Shopping</button>
+    </div>
+  </div>
+} @else {
+
+<div class="payment-page">
+
+  <!-- ── Navbar ── -->
+  <header class="pay-navbar">
+    <span class="pay-brand">Shopiva</span>
+    <div class="pay-secure">
+      <span class="material-symbols-outlined">lock</span>
+      Secure Checkout
+    </div>
+    <button class="pay-cart">
+      <span class="material-symbols-outlined">shopping_cart</span>
+    </button>
+  </header>
+
+  <div class="pay-body">
+
+    <!-- ── Left: Payment Form ── -->
+    <div class="pay-left">
+      <a href="#" class="back-link">
+        <span class="material-symbols-outlined">chevron_left</span>
+        Back to Shipping
+      </a>
+
+      <h1>Payment Method</h1>
+
+      <!-- Method Selector -->
+      <div class="method-tabs">
+        <button
+          class="method-tab"
+          [class.active]="selectedMethod === 'card'"
+          (click)="selectMethod('card')"
+        >
+          <span class="material-symbols-outlined">credit_card</span>
+          Card
+        </button>
+        <button
+          class="method-tab"
+          [class.active]="selectedMethod === 'paypal'"
+          (click)="selectMethod('paypal')"
+        >
+          <span class="method-icon-text">P</span>
+          PayPal
+        </button>
+        <button
+          class="method-tab"
+          [class.active]="selectedMethod === 'applepay'"
+          (click)="selectMethod('applepay')"
+        >
+          <span class="method-icon-text"></span>
+          Apple Pay
+        </button>
+      </div>
+
+      <!-- Card Form -->
+      @if (selectedMethod === 'card') {
+        <div class="card-form">
+
+          <div class="form-group">
+            <label>Cardholder Name</label>
+            <input
+              type="text"
+              [(ngModel)]="cardholderName"
+              placeholder="ALEXANDRA RIVERS"
+              class="form-input name-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Card Number</label>
+            <div class="stripe-field" #cardElement></div>
+          </div>
+
+          @if (errorMessage) {
+            <div class="error-msg">
+              <span class="material-symbols-outlined">error</span>
+              {{ errorMessage }}
+            </div>
+          }
+
+          <label class="save-card">
+            <input type="checkbox" [(ngModel)]="saveCard" />
+            <span>Save this card for future high-luxe purchases</span>
+          </label>
+
+        </div>
+      }
+
+      @if (selectedMethod === 'paypal') {
+        <div class="alt-method">
+          <span class="material-symbols-outlined">open_in_new</span>
+          <p>You'll be redirected to PayPal to complete your purchase.</p>
+        </div>
+      }
+
+      @if (selectedMethod === 'applepay') {
+        <div class="alt-method">
+          <span class="material-symbols-outlined">phone_iphone</span>
+          <p>Use Touch ID or Face ID to complete your purchase.</p>
+        </div>
+      }
+
+      <!-- Security Badges -->
+      <div class="security-badges">
+        <div class="badge">
+          <span class="material-symbols-outlined">security</span>
+          SSL ENCRYPTED
+        </div>
+        <div class="badge">
+          <span class="material-symbols-outlined">verified_user</span>
+          PCI COMPLIANT
+        </div>
+        <div class="badge">
+          <span class="material-symbols-outlined">shield</span>
+          FRAUD PROTECTED
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Right: Order Summary ── -->
+    <div class="pay-right">
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+
+        <div class="order-items">
+          @for (item of orderItems; track item.name) {
+            <div class="order-item">
+              <img [src]="item.image" [alt]="item.name" class="item-img" />
+              <div class="item-info">
+                <p class="item-name">{{ item.name }}</p>
+                <p class="item-variant">{{ item.variant }}</p>
+              </div>
+              <span class="item-price">${{ item.price.toFixed(2) }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="order-totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span>${{ subtotal.toFixed(2) }}</span>
+          </div>
+          <div class="total-row">
+            <span>Shipping</span>
+            <span class="free">Free Premium</span>
+          </div>
+          <div class="total-row">
+            <span>Estimated Taxes</span>
+            <span>${{ taxes.toFixed(2) }}</span>
+          </div>
+          <div class="total-row total-final">
+            <span>Total</span>
+            <div class="total-amount">
+              <span class="currency">USD</span>
+              <span class="amount">${{ total.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="btn-pay"
+          (click)="pay()"
+          [disabled]="isProcessing || (selectedMethod === 'card' && !cardholderName)"
+        >
+          @if (isProcessing) {
+            <span class="material-symbols-outlined spinning">progress_activity</span>
+            Processing...
+          } @else {
+            <span class="material-symbols-outlined">shield</span>
+            Complete Purchase
+          }
+        </button>
+
+        <p class="terms">
+          By completing your purchase, you agree to Shopiva's
+          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="pay-footer">
+    <div class="footer-inner">
+      <div>
+        <h3>Shopiva</h3>
+        <p>Redefining the digital shopping experience with tech-luxe aesthetics.</p>
+      </div>
+      <div>
+        <h4>SHOP</h4>
+        <ul>
+          <li><a href="#">Collections</a></li>
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Limited Edition</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>SUPPORT</h4>
+        <ul>
+          <li><a href="#">Global Shipping</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>SECURITY</h4>
+        <div class="footer-badges">
+          <span class="material-symbols-outlined">credit_card</span>
+          <span class="material-symbols-outlined">lock</span>
+          <span class="material-symbols-outlined">verified_user</span>
+        </div>
+        <p class="footer-copy">© 2024 Shopiva. Tech-Luxe Experience.</p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+}

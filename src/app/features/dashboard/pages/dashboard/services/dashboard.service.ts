@@ -56,7 +56,7 @@ export interface Banner {
 })
 export class DashboardService {
 
-  private api = environment.apiUrl;
+  private api = environment.api.baseUrl;
 
   constructor(private http: HttpClient) {}
 

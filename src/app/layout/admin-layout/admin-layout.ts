@@ -3,9 +3,9 @@ import { RouterOutlet } from '@angular/router';
 import { Sidebar } from '../../shared/sidebar/sidebar';
 
 @Component({
-  selector: 'app-main-layout',
+  selector: 'app-admin-layout',
   imports: [RouterOutlet, Sidebar],
-  templateUrl: './main-layout.html',
-  styleUrl: './main-layout.css',
+  templateUrl: './admin-layout.html',
+  styleUrl: './admin-layout.css',
 })
-export class MainLayout {}
+export class AdminLayout {}

@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { Dashboard } from './features/dashboard/pages/dashboard/dashboard';
+import { AdminLayout } from './layout/admin-layout/admin-layout';
 import { Login } from './features/auth/components/login/login';
 import { Register } from './features/auth/components/register/register';
 import { ForgetPassword } from './features/auth/components/forget-password/forget-password';
@@ -46,6 +48,22 @@ export const routes: Routes = [
       { path: "analytics", component: SellerAnalytics, canActivate: [authGuard, roleGuard], data: { roles: ['Seller'] }, pathMatch: "full" },
       { path: "add-product", component: ProductForm, pathMatch: "full" },
       { path: "edit-product/:id", component: ProductForm, pathMatch: "full" },
+    ]
+  },
+
+  {
+    path: 'admin',
+    component: AdminLayout,
+    children: [
+      {
+        path: 'dashboard',
+        component: Dashboard
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
     ]
   },
 

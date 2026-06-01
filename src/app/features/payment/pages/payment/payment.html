@@ -1,235 +1,301 @@
-<!-- Success Screen -->
-@if (paymentSuccess) {
-  <div class="success-screen">
-    <div class="success-card">
-      <div class="success-icon">
-        <span class="material-symbols-outlined">check_circle</span>
+<!-- ══════════════════════════════════════════════════════════
+     SUCCESS SCREEN
+     ══════════════════════════════════════════════════════════ -->
+@if (paymentSuccess()) {
+  <div class="min-h-screen flex items-center justify-center bg-background px-margin-mobile">
+    <div class="glass max-w-md w-full p-12 rounded-xl flex flex-col items-center gap-6 text-center shadow-[0_24px_64px_-12px_rgba(0,62,199,0.15)]">
+      <div class="w-24 h-24 rounded-full bg-tertiary/10 flex items-center justify-center">
+        <span
+          class="material-symbols-outlined text-6xl text-tertiary"
+          style="font-variation-settings: 'FILL' 1;"
+        >check_circle</span>
       </div>
-      <h2>Payment Successful!</h2>
-      <p>Your order has been confirmed. You'll receive a confirmation email shortly.</p>
-      <button class="btn-primary" routerLink="/">Continue Shopping</button>
+      <h2 class="font-headline-lg text-headline-lg text-on-surface">Payment Successful!</h2>
+      <p class="text-on-surface-variant font-body-md">
+        Your order has been confirmed. You'll receive a confirmation email shortly.
+      </p>
+      <button
+        (click)="continueShopping()"
+        class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-on-primary rounded-lg font-headline-md shadow-[0_8px_20px_-4px_rgba(0,62,199,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(0,62,199,0.5)] transition-all active:scale-[0.98]"
+      >
+        Continue Shopping
+      </button>
     </div>
   </div>
-} @else {
+}
 
-<div class="payment-page">
+<!-- ══════════════════════════════════════════════════════════
+     MAIN PAYMENT PAGE
+     ══════════════════════════════════════════════════════════ -->
+@if (!paymentSuccess()) {
+<div class="min-h-screen flex flex-col bg-background">
 
-  <!-- ── Navbar ── -->
-  <header class="pay-navbar">
-    <span class="pay-brand">Shopiva</span>
-    <div class="pay-secure">
-      <span class="material-symbols-outlined">lock</span>
-      Secure Checkout
+  <!-- ── Navbar ──────────────────────────────────────────────── -->
+  <header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 shadow-[0_8px_32px_0_rgba(0,62,199,0.08)]">
+    <div class="flex items-center justify-between px-6 md:px-margin-desktop py-4 max-w-container-max mx-auto h-20">
+      <!-- Brand -->
+      <span class="font-display-lg text-headline-md tracking-tighter text-primary">Shopiva</span>
+
+      <!-- Stepper (center) -->
+      <div class="hidden md:block">
+        <app-checkout-steps activeStep="payment" />
+      </div>
+
+      <!-- Secure badge -->
+      <div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+        <span class="material-symbols-outlined text-tertiary text-sm"
+          style="font-variation-settings: 'FILL' 1;">lock</span>
+        Secure Checkout
+      </div>
     </div>
-    <button class="pay-cart">
-      <span class="material-symbols-outlined">shopping_cart</span>
-    </button>
+
+    <!-- Mobile stepper -->
+    <div class="md:hidden border-t border-outline-variant/20 px-4 py-3">
+      <app-checkout-steps activeStep="payment" />
+    </div>
   </header>
 
-  <div class="pay-body">
+  <!-- ── Body ────────────────────────────────────────────────── -->
+  <main class="flex-1 pt-32 pb-margin-desktop px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 
-    <!-- ── Left: Payment Form ── -->
-    <div class="pay-left">
-      <a href="#" class="back-link">
-        <span class="material-symbols-outlined">chevron_left</span>
-        Back to Shipping
-      </a>
+      <!-- ════════════════════════════════════
+           LEFT: Payment Form
+           ════════════════════════════════════ -->
+      <div class="lg:col-span-7 space-y-8">
 
-      <h1>Payment Method</h1>
+        <!-- Back link -->
+        <a
+          routerLink="/checkout/shipping"
+          class="inline-flex items-center gap-1 text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-base">chevron_left</span>
+          Back to Shipping
+        </a>
 
-      <!-- Method Selector -->
-      <div class="method-tabs">
-        <button
-          class="method-tab"
-          [class.active]="selectedMethod === 'card'"
-          (click)="selectMethod('card')"
-        >
-          <span class="material-symbols-outlined">credit_card</span>
-          Card
-        </button>
-        <button
-          class="method-tab"
-          [class.active]="selectedMethod === 'paypal'"
-          (click)="selectMethod('paypal')"
-        >
-          <span class="method-icon-text">P</span>
-          PayPal
-        </button>
-        <button
-          class="method-tab"
-          [class.active]="selectedMethod === 'applepay'"
-          (click)="selectMethod('applepay')"
-        >
-          <span class="method-icon-text"></span>
-          Apple Pay
-        </button>
+        <h1 class="font-headline-lg text-headline-lg text-on-surface">Payment Method</h1>
+
+        <!-- Cart error banner -->
+        @if (cartError()) {
+          <div class="glass p-4 rounded-lg flex items-center gap-3 border border-error/20 bg-error-container/20">
+            <span class="material-symbols-outlined text-error flex-shrink-0">error_outline</span>
+            <p class="text-on-surface font-body-md">{{ cartError() }}</p>
+          </div>
+        }
+
+        <!-- ── Method Tabs ─────────────────────────────────────── -->
+        <div class="glass p-6 rounded-lg space-y-4">
+          <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Select Method</p>
+          <div class="grid grid-cols-3 gap-3">
+            @for (method of paymentMethods; track method.key) {
+              <button
+                (click)="selectMethod(method.key)"
+                class="p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all active:scale-95"
+                [class.border-primary]="selectedMethod() === method.key"
+                [class.bg-primary/5]="selectedMethod() === method.key"
+                [class.shadow-md]="selectedMethod() === method.key"
+                [class.border-outline-variant]="selectedMethod() !== method.key"
+                [class.hover:border-primary/40]="selectedMethod() !== method.key"
+              >
+                <span class="material-symbols-outlined text-2xl text-primary">{{ method.icon }}</span>
+                <span class="font-label-md text-label-md text-on-surface">{{ method.label }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- ── Card Form ───────────────────────────────────────── -->
+        @if (selectedMethod() === 'card') {
+          <div class="glass p-6 rounded-lg space-y-6">
+            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Card Details</p>
+
+            <!-- Cardholder name -->
+            <div class="space-y-2">
+              <label class="font-label-md text-label-md text-on-surface-variant">Cardholder Name</label>
+              <input
+                type="text"
+                [(ngModel)]="cardholderName"
+                placeholder="ALEXANDRA RIVERS"
+                class="w-full bg-surface-container rounded-lg border border-outline-variant/30 focus:ring-2 focus:ring-primary/20 focus:border-primary p-3 font-body-md uppercase tracking-widest transition-all"
+              />
+            </div>
+
+            <!-- Stripe element mount -->
+            <div class="space-y-2">
+              <label class="font-label-md text-label-md text-on-surface-variant">Card Number</label>
+              <div
+                #cardElement
+                class="bg-surface-container rounded-lg border border-outline-variant/30 focus-within:ring-2 focus-within:ring-primary/20 p-4 transition-all min-h-[52px]"
+              ></div>
+            </div>
+
+            <!-- Save card -->
+            <label class="flex items-center gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                [(ngModel)]="saveCard"
+                class="w-4 h-4 rounded accent-primary"
+              />
+              <span class="font-body-md text-on-surface-variant">
+                Save this card for future high-luxe purchases
+              </span>
+            </label>
+          </div>
+        }
+
+        <!-- ── PayPal placeholder ──────────────────────────────── -->
+        @if (selectedMethod() === 'paypal') {
+          <div class="glass p-16 rounded-lg flex flex-col items-center gap-4 text-on-surface-variant">
+            <span class="material-symbols-outlined text-6xl text-outline">open_in_new</span>
+            <p class="font-body-md text-center max-w-xs">
+              You'll be redirected to PayPal to complete your purchase securely.
+            </p>
+          </div>
+        }
+
+        <!-- ── Apple Pay placeholder ──────────────────────────── -->
+        @if (selectedMethod() === 'applepay') {
+          <div class="glass p-16 rounded-lg flex flex-col items-center gap-4 text-on-surface-variant">
+            <span class="material-symbols-outlined text-6xl text-outline">phone_iphone</span>
+            <p class="font-body-md text-center max-w-xs">
+              Use Touch ID or Face ID to complete your purchase.
+            </p>
+          </div>
+        }
+
+        <!-- ── Payment error ───────────────────────────────────── -->
+        @if (errorMessage()) {
+          <div class="glass p-4 rounded-lg flex items-center gap-3 border border-error/20 bg-error-container/20">
+            <span class="material-symbols-outlined text-error flex-shrink-0">error</span>
+            <p class="text-error font-body-md">{{ errorMessage() }}</p>
+          </div>
+        }
+
+        <!-- ── Security Badges ────────────────────────────────── -->
+        <div class="flex flex-wrap gap-3">
+          @for (badge of securityBadges; track badge.icon) {
+            <div class="glass px-4 py-2 rounded-full flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-sm text-tertiary">{{ badge.icon }}</span>
+              <span class="font-label-sm text-label-sm uppercase tracking-wider">{{ badge.label }}</span>
+            </div>
+          }
+        </div>
+
       </div>
 
-      <!-- Card Form -->
-      @if (selectedMethod === 'card') {
-        <div class="card-form">
+      <!-- ════════════════════════════════════
+           RIGHT: Order Summary + Pay CTA
+           ════════════════════════════════════ -->
+      <div class="lg:col-span-5">
+        <div class="glass p-8 rounded-lg sticky top-32 space-y-6 shadow-[0_16px_48px_-12px_rgba(0,62,199,0.12)] border border-primary/5">
+          <h2 class="font-headline-lg text-headline-lg text-on-surface">Order Summary</h2>
 
-          <div class="form-group">
-            <label>Cardholder Name</label>
-            <input
-              type="text"
-              [(ngModel)]="cardholderName"
-              placeholder="ALEXANDRA RIVERS"
-              class="form-input name-input"
-            />
-          </div>
-
-          <div class="form-group">
-            <label>Card Number</label>
-            <div class="stripe-field" #cardElement></div>
-          </div>
-
-          @if (errorMessage) {
-            <div class="error-msg">
-              <span class="material-symbols-outlined">error</span>
-              {{ errorMessage }}
+          <!-- ── Cart items loading skeleton ──────────────────── -->
+          @if (cartLoading()) {
+            <div class="space-y-4 animate-pulse">
+              @for (i of [1, 2]; track i) {
+                <div class="flex gap-4 items-center">
+                  <div class="w-16 h-16 rounded-lg bg-surface-container-high flex-shrink-0"></div>
+                  <div class="flex-grow space-y-2">
+                    <div class="h-4 bg-surface-container-high rounded w-3/4"></div>
+                    <div class="h-3 bg-surface-container-high rounded w-1/2"></div>
+                  </div>
+                  <div class="h-4 w-16 bg-surface-container-high rounded flex-shrink-0"></div>
+                </div>
+              }
             </div>
           }
 
-          <label class="save-card">
-            <input type="checkbox" [(ngModel)]="saveCard" />
-            <span>Save this card for future high-luxe purchases</span>
-          </label>
+          <!-- ── Cart items ────────────────────────────────────── -->
+          @if (!cartLoading()) {
+            <div class="space-y-4 max-h-64 overflow-y-auto pr-1">
+              @for (item of cartItems(); track item.product.id) {
+                <div class="flex gap-4 items-center">
+                  <div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+                    <img
+                      [src]="item.product.imageUrls?.[0]"
+                      [alt]="item.product.name"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div class="flex-grow min-w-0">
+                    <p class="font-label-md text-label-md text-on-surface truncate">{{ item.product.name }}</p>
+                    <p class="font-body-md text-on-surface-variant text-sm">{{ item.product.categoryName }}</p>
+                    <p class="font-label-sm text-on-surface-variant">Qty: {{ item.quantity }}</p>
+                  </div>
+                  <p class="font-label-md text-label-md text-primary flex-shrink-0">
+                    {{ ((item.product.discountPrice ?? item.product.price) * item.quantity) | currency }}
+                  </p>
+                </div>
+              }
+            </div>
+          }
 
-        </div>
-      }
-
-      @if (selectedMethod === 'paypal') {
-        <div class="alt-method">
-          <span class="material-symbols-outlined">open_in_new</span>
-          <p>You'll be redirected to PayPal to complete your purchase.</p>
-        </div>
-      }
-
-      @if (selectedMethod === 'applepay') {
-        <div class="alt-method">
-          <span class="material-symbols-outlined">phone_iphone</span>
-          <p>Use Touch ID or Face ID to complete your purchase.</p>
-        </div>
-      }
-
-      <!-- Security Badges -->
-      <div class="security-badges">
-        <div class="badge">
-          <span class="material-symbols-outlined">security</span>
-          SSL ENCRYPTED
-        </div>
-        <div class="badge">
-          <span class="material-symbols-outlined">verified_user</span>
-          PCI COMPLIANT
-        </div>
-        <div class="badge">
-          <span class="material-symbols-outlined">shield</span>
-          FRAUD PROTECTED
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ── Right: Order Summary ── -->
-    <div class="pay-right">
-      <div class="order-summary">
-        <h2>Order Summary</h2>
-
-        <div class="order-items">
-          @for (item of orderItems; track item.name) {
-            <div class="order-item">
-              <img [src]="item.image" [alt]="item.name" class="item-img" />
-              <div class="item-info">
-                <p class="item-name">{{ item.name }}</p>
-                <p class="item-variant">{{ item.variant }}</p>
+          <!-- ── Totals ─────────────────────────────────────────── -->
+          <div class="space-y-3 pt-4 border-t border-outline-variant/30">
+            <div class="flex justify-between font-body-md">
+              <span class="text-on-surface-variant">Subtotal</span>
+              <span class="font-semibold">{{ summary().subtotal | currency }}</span>
+            </div>
+            <div class="flex justify-between font-body-md">
+              <span class="text-on-surface-variant">Shipping</span>
+              <span class="font-semibold text-secondary">Free Premium</span>
+            </div>
+            <div class="flex justify-between font-body-md">
+              <span class="text-on-surface-variant">Estimated Taxes</span>
+              <span class="font-semibold">{{ summary().tax | currency }}</span>
+            </div>
+            @if (summary().discount > 0) {
+              <div class="flex justify-between font-body-md text-secondary">
+                <span>Discount</span>
+                <span class="font-semibold">- {{ summary().discount | currency }}</span>
               </div>
-              <span class="item-price">${{ item.price.toFixed(2) }}</span>
-            </div>
-          }
-        </div>
-
-        <div class="order-totals">
-          <div class="total-row">
-            <span>Subtotal</span>
-            <span>${{ subtotal.toFixed(2) }}</span>
-          </div>
-          <div class="total-row">
-            <span>Shipping</span>
-            <span class="free">Free Premium</span>
-          </div>
-          <div class="total-row">
-            <span>Estimated Taxes</span>
-            <span>${{ taxes.toFixed(2) }}</span>
-          </div>
-          <div class="total-row total-final">
-            <span>Total</span>
-            <div class="total-amount">
-              <span class="currency">USD</span>
-              <span class="amount">${{ total.toFixed(2) }}</span>
+            }
+            <div class="flex justify-between items-baseline pt-3 border-t border-outline-variant/30">
+              <span class="font-headline-md text-headline-md text-on-surface">Total</span>
+              <div class="flex items-baseline gap-1">
+                <span class="font-label-sm text-on-surface-variant">USD</span>
+                <span class="font-headline-lg text-headline-lg text-primary">{{ summary().total | currency : 'USD' : 'symbol' : '1.2-2' }}</span>
+              </div>
             </div>
           </div>
+
+          <!-- ── Pay Button ─────────────────────────────────────── -->
+          <button
+            (click)="pay()"
+            [disabled]="isProcessing() || !canPay()"
+            class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-on-primary rounded-lg font-headline-md shadow-[0_8px_20px_-4px_rgba(0,62,199,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(0,62,199,0.5)] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          >
+            @if (isProcessing()) {
+              <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              Processing...
+            } @else {
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield</span>
+              Complete Purchase · {{ summary().total | currency }}
+            }
+          </button>
+
+          <p class="text-center text-on-surface-variant font-label-sm text-label-sm leading-relaxed">
+            By completing your purchase, you agree to Shopiva's
+            <a href="#" class="text-primary hover:underline">Terms of Service</a>
+            and
+            <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
+          </p>
+
+          <!-- ── Trust badges ───────────────────────────────────── -->
+          <div class="pt-4 border-t border-outline-variant/30 flex justify-center gap-4 text-outline">
+            <span class="material-symbols-outlined" title="Secure Payment">lock</span>
+            <span class="material-symbols-outlined" title="Global Shipping">public</span>
+            <span class="material-symbols-outlined" title="24/7 Support">support_agent</span>
+            <span class="material-symbols-outlined" title="Quality Guaranteed">verified</span>
+          </div>
         </div>
-
-        <button
-          class="btn-pay"
-          (click)="pay()"
-          [disabled]="isProcessing || (selectedMethod === 'card' && !cardholderName)"
-        >
-          @if (isProcessing) {
-            <span class="material-symbols-outlined spinning">progress_activity</span>
-            Processing...
-          } @else {
-            <span class="material-symbols-outlined">shield</span>
-            Complete Purchase
-          }
-        </button>
-
-        <p class="terms">
-          By completing your purchase, you agree to Shopiva's
-          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-        </p>
-
       </div>
+
     </div>
+  </main>
 
-  </div>
-
-  <!-- ── Footer ── -->
-  <footer class="pay-footer">
-    <div class="footer-inner">
-      <div>
-        <h3>Shopiva</h3>
-        <p>Redefining the digital shopping experience with tech-luxe aesthetics.</p>
-      </div>
-      <div>
-        <h4>SHOP</h4>
-        <ul>
-          <li><a href="#">Collections</a></li>
-          <li><a href="#">New Arrivals</a></li>
-          <li><a href="#">Limited Edition</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>SUPPORT</h4>
-        <ul>
-          <li><a href="#">Global Shipping</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>SECURITY</h4>
-        <div class="footer-badges">
-          <span class="material-symbols-outlined">credit_card</span>
-          <span class="material-symbols-outlined">lock</span>
-          <span class="material-symbols-outlined">verified_user</span>
-        </div>
-        <p class="footer-copy">© 2024 Shopiva. Tech-Luxe Experience.</p>
-      </div>
-    </div>
-  </footer>
-
+  <!-- ── Footer ──────────────────────────────────────────────── -->
+  <app-footer />
 </div>
-
 }

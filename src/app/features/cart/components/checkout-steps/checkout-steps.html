@@ -1,0 +1,28 @@
+<div class="flex items-center justify-center gap-4 md:gap-12 overflow-x-auto py-2">
+  @for (step of steps; track step.key; let last = $last) {
+    <div class="flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all"
+        [class.bg-secondary]="activeStep === step.key"
+        [class.text-on-secondary]="activeStep === step.key"
+        [class.shadow-lg]="activeStep === step.key"
+        [class.shadow-secondary\/20]="activeStep === step.key"
+        [class.bg-surface-container-high]="activeStep !== step.key"
+        [class.text-on-surface-variant]="activeStep !== step.key"
+      >
+        {{ step.index }}
+      </div>
+      <span
+        class="font-label-md text-label-md whitespace-nowrap"
+        [class.text-primary]="activeStep === step.key"
+        [class.text-on-surface-variant]="activeStep !== step.key"
+      >
+        {{ step.label }}
+      </span>
+    </div>
+
+    @if (!last) {
+      <div class="h-px w-8 md:w-16 bg-outline-variant flex-shrink-0"></div>
+    }
+  }
+</div>

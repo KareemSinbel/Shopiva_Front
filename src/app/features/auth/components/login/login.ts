@@ -2,7 +2,7 @@ import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth-service';
 import { NgClass } from '@angular/common';
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 
 @Component({
@@ -15,9 +15,11 @@ export class Login {
 
   errorMessage: WritableSignal<string> = signal('');
   isLoading: WritableSignal<boolean> = signal(false);
+  returnUrl: string = '/';
 
 
-  constructor(private _authService: AuthService, private _router: Router)
+
+  constructor(private _authService: AuthService, private _router: Router, private route:ActivatedRoute)
   {
     if (this._authService.isLoggedIn()) {
       this._router.navigate(['/']);
@@ -63,16 +65,18 @@ export class Login {
 
           if (role === 'Admin') {
 
-            this._router.navigate(['/admin/dashboard']);
+            this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
 
           } else if (role === 'Seller') {
 
-            this._router.navigate(['/seller/dashboard']);
+            this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/seller/dashboard';
 
           } else {
 
-            this._router.navigate(['/']);
+            this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
           }
+
+          this._router.navigateByUrl(this.returnUrl);
         },
 
         error: (error) => {

@@ -88,7 +88,7 @@ export class SellerService {
 
   getProductById(id: number): Observable<SellerProductSummaryDto> {
     return this.http
-      .get<SellerProductSummaryDto>(`${this.baseUrl}/products/${id}`)
+      .get<SellerProductSummaryDto>(`https://localhost:7259/api/products/${id}`)
       .pipe(
         catchError((err) => {
           console.error('Error fetching product:', err);

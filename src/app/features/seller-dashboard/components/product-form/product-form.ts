@@ -20,13 +20,12 @@ export class ProductForm implements OnInit {
     price: new FormControl('', [Validators.required, Validators.min(0.01)]),
     discountedPrice: new FormControl(''),
     stock: new FormControl('', [Validators.required, Validators.min(0)]),
-    categoryId: new FormControl('', [Validators.required]),
+    categoryId: new FormControl({disabled: true}, [Validators.required]),
   });
 
   isEditMode = false;
   productId: number | null = null;
   currentProduct: SellerProductSummaryDto | null = null;
-  loading = false;
   error: string | null = null;
   selectedFiles: File[] = [];
   previewUrls: string[] = [];
@@ -36,6 +35,7 @@ export class ProductForm implements OnInit {
   categories = signal<any[]>([]);
   categoriesLoading = signal(false);
   categoriesError = signal<string | null>(null);
+  loading = signal<boolean>(false);
 
   constructor(
     private sellerService: SellerService,
@@ -71,7 +71,7 @@ export class ProductForm implements OnInit {
     });
   }
   private loadProduct(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.error = null;
 
     this.sellerService.getProductById(id).subscribe({
@@ -79,11 +79,11 @@ export class ProductForm implements OnInit {
         this.currentProduct = product;
         this.existingImageUrls = product.imageUrls || [];
         this.populateForm(product);
-        this.loading = false;
+        this.loading.set(false) ;
       },
       error: (err) => {
         this.error = 'Failed to load product. Please try again.';
-        this.loading = false;
+        this.loading.set(false);
         console.error(err);
       },
     });
@@ -140,7 +140,7 @@ export class ProductForm implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.error = null;
 
     const formData = this.buildFormData();
@@ -154,7 +154,7 @@ export class ProductForm implements OnInit {
         this.error = this.isEditMode
           ? 'Failed to update product. Please try again.'
           : 'Failed to create product. Please try again.';
-        this.loading = false;
+        this.loading.set(false) ;
         console.error(err);
       },
     });
@@ -199,7 +199,7 @@ export class ProductForm implements OnInit {
       price: product.price,
       discountedPrice: product.discountedPrice || '',
       stock: product.stock,
-      categoryId: product.categoryId || '',
+      categoryId: this.categories().find((c) => c.name === product.categoryName)?.id || '',
     });
   }
 

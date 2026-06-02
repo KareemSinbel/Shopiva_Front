@@ -9,7 +9,7 @@ import {
   computed,
   viewChild,
 } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
@@ -40,6 +40,7 @@ interface CreatePaymentIntentResponse {
   standalone: true,
   imports: [CurrencyPipe, FormsModule, CheckoutSteps, Footer, GradientButton, RouterLink],
   templateUrl: './payment.html',
+  styleUrl: './payment.css',
 })
 
 
@@ -65,7 +66,7 @@ export class Payment implements OnInit, AfterViewInit, OnDestroy {
   readonly discountAmount = signal(0);
   readonly cartId = signal<string | null>(null);
 
-  readonly selectedMethod = signal<'card' | 'paypal' | 'applepay'>('card');
+  readonly selectedMethod = signal<'card' | 'paypal' | 'applepay' | null>(null);
   readonly isProcessing = signal(false);
   readonly paymentSuccess = signal(false);
   readonly errorMessage = signal('');
@@ -89,12 +90,12 @@ export class Payment implements OnInit, AfterViewInit, OnDestroy {
 
   readonly canPay = computed(() =>
     this.cartItems().length > 0 &&
-    (this.selectedMethod() !== 'card' || this.cardholderName.trim().length > 0)
+    (this.selectedMethod() !== 'card' || this.cardholderName().trim().length > 0)
   );
   // ────────────────────────────────────────────────────────────────────────
 
   // Non-signal form fields (simple two-way binding is fine here)
-  cardholderName = '';
+  cardholderName = signal<string>('');
   saveCard = false;
 
   // Expose TAX_RATE to template
@@ -199,7 +200,7 @@ export class Payment implements OnInit, AfterViewInit, OnDestroy {
     const result = await this.stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: this.cardElement,
-        billing_details: { name: this.cardholderName },
+        billing_details: { name: this.cardholderName()   },
       },
     });
 

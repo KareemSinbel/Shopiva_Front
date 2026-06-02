@@ -10,7 +10,7 @@
     </div>
 
     <!-- Loading State -->
-    @if (loading) {
+    @if (loading()) {
     <div class="flex items-center justify-center py-20">
         <div class="text-center">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
@@ -28,7 +28,7 @@
     }
 
     <!-- Form Content -->
-    @if (!loading) {
+    @if (!loading()) {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
         <!-- Main Form -->
         <div class="lg:col-span-2">
@@ -129,7 +129,7 @@
                 <!-- Form Buttons -->
                 <div class="flex gap-4 pt-6">
                     <app-gradient-button [btnText]="isEditMode ? 'Update Product' : 'Add Product'" type="submit"
-                        [isDisabled]="loading"></app-gradient-button>
+                        [isDisabled]="loading()"></app-gradient-button>
                     <button type="button" (click)="cancel()"
                         class="px-6 py-3 rounded-lg border border-outline-variant hover:bg-surface-container transition-colors font-label-md text-on-surface">
                         Cancel

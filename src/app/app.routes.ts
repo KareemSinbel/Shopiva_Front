@@ -20,6 +20,7 @@ import { ProductDetailComponent } from './features/product details/components/pr
 import { ProductList } from './features/product-list/product-list';
 import { Payment } from './features/payment/pages/payment/payment';
 import { Cart } from './features/cart/components/cart/cart';
+import { UserManagement } from './features/dashboard/components/user-management/user-management';
 
 export const routes: Routes = [
   {
@@ -61,19 +62,26 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayout,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin'] },
     children: [
-      {
-        path: 'dashboard',
-        component: Dashboard,
-        canActivate: [authGuard, roleGuard],
-        data: { roles: ['Admin'] },
-        pathMatch: 'full'
-      },
       {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        component: Dashboard,
+
+        pathMatch: 'full'
+      },
+      {
+        path: 'users',
+        component: UserManagement,
+        pathMatch: 'full'
       }
+
     ]
   },
 

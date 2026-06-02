@@ -19,7 +19,7 @@
 
   <!-- ── Stats Grid ── -->
   <div class="stats-grid">
-    @if (isLoadingOverview) {
+    @if (isLoadingOverview()) {
       @for (i of [1,2,3,4]; track i) {
         <div class="stat-card skeleton-card"></div>
       }
@@ -48,7 +48,7 @@
         <h2>Recent Users</h2>
         <button class="view-all-btn">View All Users</button>
       </div>
-      @if (isLoadingUsers) {
+      @if (isLoadingUsers()) {
         <div class="skeleton-rows">
           @for (i of [1,2,3,4]; track i) {
             <div class="skeleton-row"></div>
@@ -128,7 +128,7 @@
             <span class="material-symbols-outlined">add_circle</span>
           </button>
         </div>
-        @if (isLoadingPromos) {
+        @if (isLoadingPromos()) {
           <div class="promo-list">
             @for (i of [1,2,3]; track i) {
               <div class="skeleton-promo"></div>
@@ -157,7 +157,7 @@
       </div>
 
       <!-- Live Banner -->
-      @if (isLoadingBanner) {
+      @if (isLoadingBanner()) {
         <div class="banner-card skeleton-card"></div>
       } @else if (liveBanner) {
         <div class="banner-card">
@@ -184,32 +184,7 @@
     </div>
   </div>
 
-  <!-- ── Footer ── -->
-  <footer class="dash-footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <h2>Shopiva</h2>
-        <p>Elevating the standard of digital retail through technical excellence and aesthetic luxury.</p>
-        <span class="footer-copy">© 2024 Shopiva. Tech-Luxe Experience.</span>
-      </div>
-      <div>
-        <h4 class="footer-col-title">Platform</h4>
-        <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="#">Security</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="footer-col-title">Sustainability</h4>
-        <ul>
-          <li><a href="#">Global Shipping</a></li>
-          <li><a href="#">Sustainability</a></li>
-          <li><a href="#">Carbon Tracking</a></li>
-        </ul>
-      </div>
-    </div>
-  </footer>
+  <app-footer></app-footer>
 
 </div>
 

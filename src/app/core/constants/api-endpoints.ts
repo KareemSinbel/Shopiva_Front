@@ -25,5 +25,14 @@ export const API_ENDPOINTS = {
 
   payment:{
     createIntent: '/payments/create-intent',
+  },
+
+  admin: {
+    users:
+    {
+      getAll:      '/admin/users',
+      restrict:     (id: number) => `/admin/users/${id}/restrict`,
+      delete:      (id: number) => `/admin/users/${id}`,
+    }
   }
 };

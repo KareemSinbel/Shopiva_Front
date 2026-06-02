@@ -1,0 +1,50 @@
+<div class="px-gutter py-6 border-t border-outline-variant/10 flex items-center justify-between flex-wrap gap-4">
+  <span class="font-body-md text-body-md text-on-surface-variant">
+    Showing
+    <span class="font-bold text-on-surface">{{ showing }}</span>
+    of
+    <span class="font-bold text-on-surface">{{ totalCount }}</span>
+    users
+  </span>
+
+  <div class="flex items-center gap-2">
+    <!-- Prev -->
+    <button
+      (click)="pageChange.emit(currentPage - 1)"
+      [disabled]="currentPage === 1"
+      class="p-2 glass-surface rounded-lg hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      aria-label="Previous page"
+    >
+      <span class="material-symbols-outlined">chevron_left</span>
+    </button>
+
+    <!-- Page numbers -->
+    @for (page of visiblePages; track page) {
+      @if (page === -1) {
+        <span class="w-10 h-10 flex items-center justify-center text-on-surface-variant">…</span>
+      } @else {
+        <button
+          (click)="pageChange.emit(page)"
+          class="w-10 h-10 flex items-center justify-center rounded-lg transition-colors font-medium"
+          [class.bg-gradient-to-r]="page === currentPage"
+          [class.from-primary]="page === currentPage"
+          [class.to-secondary]="page === currentPage"
+          [class.text-white]="page === currentPage"
+          [class.hover:bg-surface-container-high]="page !== currentPage"
+        >
+          {{ page }}
+        </button>
+      }
+    }
+
+    <!-- Next -->
+    <button
+      (click)="pageChange.emit(currentPage + 1)"
+      [disabled]="currentPage === totalPages"
+      class="p-2 glass-surface rounded-lg hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      aria-label="Next page"
+    >
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </div>
+</div>

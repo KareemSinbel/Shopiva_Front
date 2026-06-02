@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Footer } from "../../../../shared/components/footer/footer";
 
 const API = 'https://localhost:7259/api';
 
@@ -46,7 +47,7 @@ interface Banner {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Footer],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -57,10 +58,10 @@ export class Dashboard implements OnInit {
   promoCodes: PromoCode[] = [];
   liveBanner: Banner | null = null;
 
-  isLoadingOverview = true;
-  isLoadingUsers    = true;
-  isLoadingPromos   = true;
-  isLoadingBanner   = true;
+  isLoadingOverview = signal<boolean>(true);
+  isLoadingUsers    = signal<boolean>(true);
+  isLoadingPromos   = signal<boolean>(true);
+  isLoadingBanner   = signal<boolean>(true);
 
   // ── Promo Modal ──
   showPromoModal = false;
@@ -111,29 +112,29 @@ export class Dashboard implements OnInit {
 
   loadOverview() {
     this.http.get<StoreOverview>(`${API}/Dashboard/overview`).subscribe({
-      next: (d) => { this.overview = d; this.isLoadingOverview = false; },
-      error: ()  => { this.isLoadingOverview = false; }
+      next: (d) => { this.overview = d; this.isLoadingOverview.set(false); },
+      error: ()  => { this.isLoadingOverview.set(false); }
     });
   }
 
   loadRecentUsers() {
     this.http.get<{ users: RecentUser[] }>(`${API}/Dashboard/recent-users`).subscribe({
-      next: (d) => { this.users = d.users; this.isLoadingUsers = false; },
-      error: ()  => { this.isLoadingUsers = false; }
+      next: (d) => { this.users = d.users; this.isLoadingUsers.set(false); },
+      error: ()  => { this.isLoadingUsers.set(false); }
     });
   }
 
   loadPromoCodes() {
     this.http.get<PromoCode[]>(`${API}/Dashboard/promo-codes`).subscribe({
-      next: (d) => { this.promoCodes = d; this.isLoadingPromos = false; },
-      error: ()  => { this.isLoadingPromos = false; }
+      next: (d) => { this.promoCodes = d; this.isLoadingPromos.set(false); },
+      error: ()  => { this.isLoadingPromos.set(false); }
     });
   }
 
   loadLiveBanner() {
     this.http.get<Banner>(`${API}/Dashboard/banners/live`).subscribe({
-      next: (d) => { this.liveBanner = d; this.isLoadingBanner = false; },
-      error: ()  => { this.isLoadingBanner = false; }
+      next: (d) => { this.liveBanner = d; this.isLoadingBanner.set(false); },
+      error: ()  => { this.isLoadingBanner.set(false) ; }
     });
   }
 

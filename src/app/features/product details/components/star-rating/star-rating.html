@@ -1,0 +1,12 @@
+<div class="flex items-center gap-4">
+  <div class="flex items-center text-secondary">
+    @for (star of stars; track $index) {
+      <span class="material-symbols-outlined" [style.font-variation-settings]="star === 'full' ? '\'fill\'1' : '\'fill\'0'">
+        {{ star === 'half' ? 'star_half' : 'star' }}
+      </span>
+    }
+  </div>
+  @if (reviewCount !== undefined) {
+    <span class="font-body-md text-on-surface-variant">({{ reviewCount }} Reviews)</span>
+  }
+</div>

@@ -1,0 +1,293 @@
+<div class="dashboard">
+
+  <!-- ── Header ── -->
+  <header class="dash-header">
+    <div>
+      <h1>Store Overview</h1>
+      <p>Welcome back, Shopiva HQ.</p>
+    </div>
+    <div class="header-actions">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search data..." class="search-input" />
+        <span class="material-symbols-outlined search-icon">search</span>
+      </div>
+      <button class="notif-btn">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Stats Grid ── -->
+  <div class="stats-grid">
+    @if (isLoadingOverview()) {
+      @for (i of [1,2,3,4]; track i) {
+        <div class="stat-card skeleton-card"></div>
+      }
+    } @else {
+      @for (stat of stats; track stat.label) {
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" [ngClass]="stat.iconBg">
+              <span class="material-symbols-outlined">{{ stat.icon }}</span>
+            </div>
+            <span class="stat-badge" [ngClass]="'badge-' + stat.badgeType">{{ stat.badge }}</span>
+          </div>
+          <p class="stat-label">{{ stat.label }}</p>
+          <h3 class="stat-value">{{ stat.value }}</h3>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- ── Main Grid ── -->
+  <div class="main-grid">
+
+    <!-- Recent Users -->
+    <div class="users-card">
+      <div class="card-header">
+        <h2>Recent Users</h2>
+        <button class="view-all-btn" (click)="goToViewAllUsers()">View All Users</button>
+      </div>
+      @if (isLoadingUsers()) {
+        <div class="skeleton-rows">
+          @for (i of [1,2,3,4]; track i) {
+            <div class="skeleton-row"></div>
+          }
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th class="th-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users; track user.id) {
+                <tr class="user-row">
+                  <td>
+                    <div class="user-info">
+                      @if (user.profileImageUrl) {
+                        <img [src]="user.profileImageUrl" [alt]="user.fullName" class="user-avatar" />
+                      } @else {
+                        <div class="user-avatar-placeholder">{{ user.fullName.charAt(0) }}</div>
+                      }
+                      <div>
+                        <p class="user-name">{{ user.fullName }}</p>
+                        <p class="user-email">{{ user.email }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-role">{{ user.role }}</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="'status-' + getStatusType(user.status)">
+                      {{ user.status }}
+                    </span>
+                  </td>
+                  <td class="td-joined">{{ user.joinedAt | date:'mediumDate' }}</td>
+                  <td class="td-action">
+                    @if (user.status.toLowerCase() === 'pending') {
+                      <button
+                        class="confirm-btn"
+                        (click)="confirmUser(user.id)"
+                        [disabled]="confirmingUserId === user.id"
+                      >
+                        @if (confirmingUserId === user.id) {
+                          <span class="material-symbols-outlined spinning">progress_activity</span>
+                        } @else {
+                          <span class="material-symbols-outlined">check_circle</span>
+                          Confirm
+                        }
+                      </button>
+                    } @else {
+                      <button class="more-btn">
+                        <span class="material-symbols-outlined">more_vert</span>
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- Right Column -->
+    <div class="right-col">
+
+      <!-- Promo Codes -->
+      <div class="promo-card">
+        <div class="card-header">
+          <h3>Promo Codes</h3>
+          <button class="icon-action-btn" (click)="openPromoModal()">
+            <span class="material-symbols-outlined">add_circle</span>
+          </button>
+        </div>
+        @if (isLoadingPromos()) {
+          <div class="promo-list">
+            @for (i of [1,2,3]; track i) {
+              <div class="skeleton-promo"></div>
+            }
+          </div>
+        } @else {
+          <div class="promo-list">
+            @for (promo of promoCodes; track promo.id) {
+              <div class="promo-item" [ngClass]="{'promo-expired': promo.expiryStatus === 'Expired'}">
+                <div>
+                  <p class="promo-code" [ngClass]="{'code-expired': promo.expiryStatus === 'Expired'}">
+                    {{ promo.code }}
+                  </p>
+                  <p class="promo-desc">{{ promo.description }}</p>
+                </div>
+                <div class="promo-right">
+                  <p class="promo-status" [ngClass]="'ps-' + getPromoStatusType(promo.expiryStatus)">
+                    {{ promo.isActive ? 'Active' : 'Inactive' }}
+                  </p>
+                  <p class="promo-expiry">{{ promo.expiryStatus }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Live Banner -->
+      @if (isLoadingBanner()) {
+        <div class="banner-card skeleton-card"></div>
+      } @else if (liveBanner) {
+        <div class="banner-card">
+          <img [src]="liveBanner.imageUrl" [alt]="liveBanner.title" class="banner-img" />
+          <div class="banner-overlay">
+            <span class="live-badge">LIVE BANNER</span>
+            <h4>{{ liveBanner.title }}</h4>
+            @if (liveBanner.subTitle) {
+              <p class="banner-subtitle">{{ liveBanner.subTitle }}</p>
+            }
+            <div class="banner-actions">
+              <button class="banner-btn-glass">Edit Banner</button>
+              <button class="banner-btn-white">Swap Assets</button>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="banner-empty">
+          <span class="material-symbols-outlined">image_not_supported</span>
+          <p>No live banner</p>
+          <button class="add-banner-btn" (click)="openBannerModal()">
+            <span class="material-symbols-outlined">add</span>
+            Add Banner
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+
+</div>
+
+<!-- ══════════════════════════════
+     Add Promo Code Modal
+══════════════════════════════ -->
+@if (showPromoModal) {
+  <div class="modal-overlay" (click)="closePromoModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h3>Add Promo Code</h3>
+        <button class="modal-close" (click)="closePromoModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Error Message -->
+        @if (promoError()) {
+          <div class="error-banner">
+            <span class="material-symbols-outlined">error</span>
+            <p>{{ promoError() }}</p>
+          </div>
+        }
+
+        <div class="form-group">
+          <label>Code <span class="required">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="promoForm.code"
+            placeholder="e.g. SUMMER20"
+            class="form-input"
+            style="text-transform: uppercase"
+            [disabled]="isSavingPromo()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Description <span class="required">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="promoForm.description"
+            placeholder="e.g. 20% Off Storewide"
+            class="form-input"
+            [disabled]="isSavingPromo()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Discount Percent <span class="required">*</span></label>
+          <input
+            type="number"
+            [(ngModel)]="promoForm.discountPercent"
+            placeholder="e.g. 20"
+            min="0"
+            max="100"
+            class="form-input"
+            [disabled]="isSavingPromo()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Expires At <span class="optional">(optional)</span></label>
+          <input
+            type="datetime-local"
+            [(ngModel)]="promoForm.expiresAt"
+            class="form-input"
+            [disabled]="isSavingPromo()"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closePromoModal()" [disabled]="isSavingPromo()">Cancel</button>
+        <button
+          class="btn-save"
+          (click)="savePromo()"
+          [disabled]="isSavingPromo() || !promoForm.code || !promoForm.description"
+        >
+          @if (isSavingPromo()) {
+            <span class="material-symbols-outlined spinning">progress_activity</span>
+            Saving...
+          } @else {
+            Add Promo Code
+          }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════
+     Add Banner Modal
+══════════════════════════════ -->
+@if (showBannerModal) {
+  <app-banner-modal
+    (close)="closeBannerModal()"
+
+  />
+}

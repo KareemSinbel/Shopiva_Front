@@ -1,0 +1,91 @@
+<!-- Profile -->
+<td class="px-gutter py-5">
+  <div class="flex items-center gap-4">
+    @if (user.avatarUrl) {
+      <img
+        [src]="user.avatarUrl"
+        [alt]="user.firstName + ' ' + user.lastName"
+        class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
+      />
+    } @else {
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span class="font-headline-md text-primary text-base">{{ initials }}</span>
+      </div>
+    }
+    <div>
+      <p class="font-headline-md text-[16px] text-on-surface leading-tight">{{ user.firstName }} {{ user.lastName }}</p>
+      <!-- <p class="font-label-sm text-label-sm text-on-surface-variant">
+        Joined {{ user.joinedAt | date : 'MMM yyyy' }}
+      </p> -->
+    </div>
+  </div>
+</td>
+
+<!-- Email -->
+<td class="px-gutter py-5 font-body-md text-body-md text-on-surface-variant">
+  {{ user.email }}
+</td>
+
+<!-- Role -->
+<td class="px-gutter py-5">
+  <span [class]="roleBadgeClass" class="px-3 py-1 rounded-full font-label-sm text-label-sm">
+    {{ user.roles[0] }}
+  </span>
+</td>
+
+<!-- Status -->
+<td class="px-gutter py-5">
+  <div class="flex items-center gap-2">
+    <div
+      class="w-2 h-2 rounded-full flex-shrink-0"
+      [class.bg-green-500]="user.isRestricted === false"
+      [class.bg-outline-variant]="user.isRestricted === true"
+    ></div>
+    <span
+      class="font-label-md text-label-md"
+      [class.text-on-surface]="user.isRestricted === false"
+      [class.text-on-surface-variant]="user.isRestricted === true"
+    >
+      {{ user.isRestricted === false ? 'Active' : 'Suspended' }}
+    </span>
+  </div>
+</td>
+
+<!-- Actions (visible on row hover) -->
+<td class="px-gutter py-5 text-right">
+  <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+    <button
+      (click)="edit.emit(user)"
+      class="p-2 hover:bg-surface-container-highest rounded-lg text-on-surface-variant transition-colors"
+      title="Edit User"
+    >
+      <span class="material-symbols-outlined text-[20px]">edit</span>
+    </button>
+
+    @if (user.isRestricted === false) {
+      <button
+        (click)="suspend.emit(user)"
+        class="p-2 hover:bg-surface-container-highest rounded-lg text-on-surface-variant transition-colors"
+        title="Suspend User"
+      >
+        <span class="material-symbols-outlined text-[20px]">block</span>
+      </button>
+    } @else {
+      <button
+        (click)="reactivate.emit(user)"
+        class="p-2 hover:bg-green-100 rounded-lg text-green-600 transition-colors"
+        title="Reactivate User"
+      >
+        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+      </button>
+    }
+
+    <!-- <button
+      (click)="delete.emit(user)"
+      class="p-2 hover:bg-error-container/50 rounded-lg text-error transition-colors"
+      title="Delete User"
+    >
+      <span class="material-symbols-outlined text-[20px]">delete</span>
+    </button> -->
+  </div>
+</td>

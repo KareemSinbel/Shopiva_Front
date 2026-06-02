@@ -1,0 +1,201 @@
+<div class="pt-24 px-margin-desktop pb-margin-desktop max-w-container-max mx-auto space-y-gutter">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="font-headline-lg text-headline-lg text-on-surface">
+            {{ isEditMode ? 'Edit Product' : 'Add New Product' }}
+        </h1>
+        <p class="text-on-surface-variant font-body-md">
+            {{ isEditMode ? 'Update your product details and images.' : 'Create a new product to sell on Shopiva.' }}
+        </p>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+    <div class="flex items-center justify-center py-20">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p class="text-on-surface-variant font-body-md">{{ isEditMode ? 'Loading product...' : 'Creating product...'
+                }}</p>
+        </div>
+    </div>
+    }
+
+    <!-- Error State -->
+    @if (error) {
+    <div class="bg-error/10 border border-error rounded-lg p-4 mb-6">
+        <p class="text-error font-body-md">{{ error }}</p>
+    </div>
+    }
+
+    <!-- Form Content -->
+    @if (!loading()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+        <!-- Main Form -->
+        <div class="lg:col-span-2">
+            <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="glass-card p-8 rounded-lg space-y-6">
+                <!-- Name -->
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface">Product Name *</label>
+                    <input type="text" formControlName="name" placeholder="Enter product name"
+                        class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 focus:border-primary focus:outline-none font-body-md" />
+                    @if (productForm.get('name')?.hasError('required') && productForm.get('name')?.touched) {
+                    <p class="text-error text-label-sm">Product name is required</p>
+                    }
+                    @if (productForm.get('name')?.hasError('minlength') && productForm.get('name')?.touched) {
+                    <p class="text-error text-label-sm">Product name must be at least 3 characters</p>
+                    }
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface">Description *</label>
+                    <textarea formControlName="description" placeholder="Enter product description" rows="4"
+                        class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 focus:border-primary focus:outline-none font-body-md resize-none"></textarea>
+                    @if (productForm.get('description')?.hasError('required') &&
+                    productForm.get('description')?.touched) {
+                    <p class="text-error text-label-sm">Description is required</p>
+                    }
+                    @if (productForm.get('description')?.hasError('minlength') &&
+                    productForm.get('description')?.touched) {
+                    <p class="text-error text-label-sm">Description must be at least 10 characters</p>
+                    }
+                </div>
+
+                <!-- Price -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface">Price *</label>
+                        <input type="number" formControlName="price" placeholder="0.00" step="0.01" min="0.01"
+                            class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 focus:border-primary focus:outline-none font-body-md" />
+                        @if (productForm.get('price')?.hasError('required') && productForm.get('price')?.touched) {
+                        <p class="text-error text-label-sm">Price is required</p>
+                        }
+                        @if (productForm.get('price')?.hasError('min') && productForm.get('price')?.touched) {
+                        <p class="text-error text-label-sm">Price must be at least 0.01</p>
+                        }
+                    </div>
+
+                    <!-- Discounted Price -->
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface">Discounted Price (optional)</label>
+                        <input type="number" formControlName="discountedPrice" placeholder="0.00" step="0.01" min="0.01"
+                            class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 focus:border-primary focus:outline-none font-body-md" />
+                    </div>
+                </div>
+
+                <!-- Stock -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface">Stock *</label>
+                        <input type="number" formControlName="stock" placeholder="0" min="0"
+                            class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 focus:border-primary focus:outline-none font-body-md" />
+                        @if (productForm.get('stock')?.hasError('required') && productForm.get('stock')?.touched) {
+                        <p class="text-error text-label-sm">Stock is required</p>
+                        }
+                        @if (productForm.get('stock')?.hasError('min') && productForm.get('stock')?.touched) {
+                        <p class="text-error text-label-sm">Stock cannot be negative</p>
+                        }
+                    </div>
+
+                    <!-- Category -->
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface">Category *</label>
+                        @if (categoriesLoading()) {
+                        <div
+                            class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface/50 flex items-center gap-2">
+                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                            <span class="text-on-surface-variant font-body-md">Loading categories...</span>
+                        </div>
+                        } @else {
+                        <select formControlName="categoryId"
+                            class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 focus:border-primary focus:outline-none font-body-md"
+                            [disabled]="categoriesLoading()">
+                            <option value="">Select a category</option>
+                            @for (cat of categories(); track cat.id) {
+                            <option [value]="cat.id">{{ cat.name }}</option>
+                            }
+                        </select>
+                        }
+                        @if (categoriesError()) {
+                        <p class="text-error text-label-sm">{{ categoriesError() }}</p>
+                        }
+                        @if (productForm.get('categoryId')?.hasError('required') &&
+                        productForm.get('categoryId')?.touched) {
+                        <p class="text-error text-label-sm">Category is required</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="flex gap-4 pt-6">
+                    <app-gradient-button [btnText]="isEditMode ? 'Update Product' : 'Add Product'" type="submit"
+                        [isDisabled]="loading()"></app-gradient-button>
+                    <button type="button" (click)="cancel()"
+                        class="px-6 py-3 rounded-lg border border-outline-variant hover:bg-surface-container transition-colors font-label-md text-on-surface">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Images Section -->
+        <div class="space-y-6">
+            <!-- New Images Upload -->
+            <div class="glass-card p-6 rounded-lg space-y-4">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Add Images</h3>
+
+                <div
+                    class="border-2 border-dashed border-primary/30 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors">
+                    <input type="file" multiple accept="image/*" (change)="onImageSelect($event)" class="hidden"
+                        #fileInput />
+                    <button type="button" (click)="fileInput.click()" class="w-full text-center">
+                        <span class="material-symbols-outlined text-primary text-[48px] block mb-2">image</span>
+                        <p class="text-on-surface font-label-md">Click to upload images</p>
+                        <p class="text-on-surface-variant text-label-sm">or drag and drop</p>
+                    </button>
+                </div>
+
+                <!-- Preview New Images -->
+                @if (previewUrls.length > 0) {
+                <div class="space-y-2">
+                    <p class="font-label-md text-label-md text-on-surface-variant">{{ previewUrls.length }} image(s)
+                        selected</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        @for (preview of previewUrls; track $index) {
+                        <div class="relative group">
+                            <img [src]="preview" alt="Preview" class="w-full h-24 object-cover rounded-lg" />
+                            <button type="button" (click)="removeNewImage($index)"
+                                class="absolute -top-2 -right-2 bg-error text-on-error rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined text-[16px]">close</span>
+                            </button>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+
+            <!-- Existing Images (Edit Mode) -->
+            @if (isEditMode && existingImageUrls.length > 0) {
+            <div class="glass-card p-6 rounded-lg space-y-4">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Current Images</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    @for (imageUrl of existingImageUrls; track imageUrl) {
+                    <div class="relative group cursor-pointer" (click)="toggleRemoveExistingImage(imageUrl)">
+                        <img [src]="imageUrl" alt="Product image" class="w-full h-24 object-cover rounded-lg"
+                            [class.opacity-50]="isImageMarkedForRemoval(imageUrl)" />
+                        @if (isImageMarkedForRemoval(imageUrl)) {
+                        <div class="absolute inset-0 bg-error/20 rounded-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-error text-[32px]">delete</span>
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+                <p class="text-label-sm text-on-surface-variant">Click an image to mark for removal</p>
+            </div>
+            }
+        </div>
+    </div>
+    }
+</div>

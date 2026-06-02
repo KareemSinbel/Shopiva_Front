@@ -1,0 +1,160 @@
+<div class="bg-surface text-on-surface font-body-md min-h-screen flex">
+  <aside
+    class="h-screen w-64 fixed left-0 top-0 z-40 bg-surface-container-lowest/90 dark:bg-inverse-surface/95 backdrop-blur-2xl border-r border-outline-variant/20 shadow-xl flex flex-col py-gutter ">
+    <div class="px-6 mb-10 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg shadow-sm">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#9333EA;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <!-- Shopping Bag / Tech Chip Hybrid -->
+          <path d="M60 70 L140 70 L145 150 Q145 160 135 160 L65 160 Q55 160 55 150 L60 70 Z" fill="none"
+            stroke="url(#logoGradient)" stroke-width="12" stroke-linejoin="round" />
+          <path d="M80 70 Q80 40 100 40 Q120 40 120 70" fill="none" stroke="url(#logoGradient)" stroke-width="10"
+            stroke-linecap="round" />
+          <!-- Technology / Sparkle Icon -->
+          <circle cx="100" cy="115" r="15" fill="url(#logoGradient)" />
+          <path d="M100 90 L100 95 M100 135 L100 140 M75 115 L80 115 M120 115 L125 115" stroke="url(#logoGradient)"
+            stroke-width="6" stroke-linecap="round" />
+        </svg>
+      </div>
+      <span class="font-headline-md text-headline-md text-primary">Shopiva</span>
+    </div>
+    <div class="px-4 mb-8">
+      <div class="flex items-center gap-3 p-3 glass-card rounded-xl">
+        <div
+          class="w-10 h-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center text-on-primary-container">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div>
+          <p class="font-label-md text-label-md text-on-surface">Admin Portal</p>
+          <p class="text-xs text-on-surface-variant">Premium Seller</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 space-y-1">
+      <a class="rounded-xl mx-2 my-1 flex items-center gap-3 px-4 py-3 font-label-md text-label-md transition-all hover:translate-x-1"
+        routerLink="dashboard" routerLinkActive="bg-secondary-container text-on-secondary-container"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <span class="material-symbols-outlined">dashboard</span>
+        Dashboard
+      </a>
+      <a class="rounded-xl mx-2 my-1 flex items-center gap-3 px-4 py-3 font-label-md text-label-md transition-all hover:translate-x-1 text-on-surface-variant hover:bg-surface-container-high"
+        routerLink="inventory"
+        routerLinkActive="bg-secondary-container text-on-secondary-container !text-on-secondary-container">
+        <span class="material-symbols-outlined">inventory_2</span>
+        Inventory
+      </a>
+      <a class="rounded-xl mx-2 my-1 flex items-center gap-3 px-4 py-3 font-label-md text-label-md transition-all hover:translate-x-1 text-on-surface-variant hover:bg-surface-container-high"
+        routerLink="orders"
+        routerLinkActive="bg-secondary-container text-on-secondary-container !text-on-secondary-container">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        Orders
+      </a>
+      <a class="rounded-xl mx-2 my-1 flex items-center gap-3 px-4 py-3 font-label-md text-label-md transition-all hover:translate-x-1 text-on-surface-variant hover:bg-surface-container-high"
+        routerLink="analytics"
+        routerLinkActive="bg-secondary-container text-on-secondary-container !text-on-secondary-container">
+        <span class="material-symbols-outlined">analytics</span>
+        Analytics
+      </a>
+      <!-- <a class="text-on-surface-variant hover:bg-surface-container-high rounded-xl mx-2 my-1 flex items-center gap-3 px-4 py-3 font-label-md text-label-md transition-all hover:translate-x-1"
+        routerLink="settings">
+        <span class="material-symbols-outlined">settings</span>
+        Settings
+      </a> -->
+    </nav>
+    <div class="mt-auto px-4 pb-4">
+      <button routerLink="/home"
+        class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+        Home
+      </button>
+      <a class="mt-4 flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors"
+        href="#">
+        <span class="material-symbols-outlined">help</span>
+        <span class="font-label-md text-label-md">Help Center</span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="ml-64 flex-1 min-h-screen overflow-y-auto">
+    <!-- TopNavBar Component -->
+    <!-- <header
+      class="fixed top-0 right-0 left-64 z-30 bg-surface/80 backdrop-blur-xl border-b border-white/10 shadow-[0_8px_32px_0_rgba(0,62,199,0.08)]">
+      <div class="flex items-center justify-between px-margin-desktop py-4 mx-auto">
+        <div class="flex items-center gap-4 flex-1">
+
+        </div>
+        <div class="flex items-center gap-6">
+
+          <div class="flex items-center gap-4">
+            <button class="p-2 text-on-surface-variant hover:bg-white/10 rounded-full transition-all active:scale-95">
+              <span class="material-symbols-outlined">shopping_cart</span>
+            </button>
+            <button
+              class="p-2 text-on-surface-variant hover:bg-white/10 rounded-full transition-all active:scale-95 relative">
+              <span class="material-symbols-outlined">notifications</span>
+              <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+            </button>
+            <div class="h-8 w-px bg-outline-variant/30"></div>
+            <button class="p-2 text-on-surface-variant hover:bg-white/10 rounded-full transition-all active:scale-95">
+              <span class="material-symbols-outlined">person</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header> -->
+    <!-- Dashboard Content -->
+    <div class="pt-5 px-margin-desktop pb-margin-desktop max-w-container-max mx-auto space-y-gutter">
+      <router-outlet></router-outlet>
+
+    </div>
+    <!-- Footer Component -->
+    <footer
+      class="w-full relative bg-surface-container-high dark:bg-surface-container-lowest border-t border-outline-variant/30">
+      <div
+        class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-margin-desktop max-w-container-max mx-auto">
+        <div class="space-y-4">
+          <span class="font-headline-lg text-headline-lg text-on-surface block">Shopiva</span>
+          <p class="text-on-surface-variant font-body-md">© 2024 Shopiva. Tech-Luxe Experience. Elevating
+            commerce through refined aesthetics and intelligent insights.</p>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-label-md text-label-md text-on-surface">Platform</h4>
+          <ul class="space-y-2">
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Inventory</a></li>
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Analytics</a></li>
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Seller Tools</a></li>
+          </ul>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-label-md text-label-md text-on-surface">Support</h4>
+          <ul class="space-y-2">
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Help Center</a></li>
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">API Docs</a></li>
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Sustainability</a></li>
+          </ul>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-label-md text-label-md text-on-surface">Legal</h4>
+          <ul class="space-y-2">
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Privacy Policy</a></li>
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Terms of Service</a></li>
+            <li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md text-body-md"
+                href="#">Global Shipping</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </main>
+</div>

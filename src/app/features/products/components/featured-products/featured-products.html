@@ -1,0 +1,41 @@
+<section class="bg-surface-container-low py-margin-desktop">
+  <div class="px-margin-desktop max-w-container-max mx-auto">
+
+    <div class="text-center mb-16">
+      <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Featured Excellence</h2>
+      <div class="h-1 w-20 bg-primary mx-auto rounded-full"></div>
+    </div>
+
+    <!-- Loading skeleton -->
+    @if (isLoading()) {
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        @for (i of [1,2,3]; track i) {
+          <div class="glass-surface p-4 rounded-lg animate-pulse">
+            <div class="aspect-square rounded-lg bg-surface-container-high mb-6"></div>
+            <div class="h-6 bg-surface-container-high rounded mb-3 w-3/4"></div>
+            <div class="h-4 bg-surface-container-high rounded mb-2 w-full"></div>
+            <div class="h-4 bg-surface-container-high rounded w-2/3"></div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error()) {
+      <div class="text-center py-16 text-on-surface-variant">
+        <span class="material-symbols-outlined text-5xl block mb-4">error_outline</span>
+        <p>{{ error() }}</p>
+      </div>
+    }
+
+    <!-- Product grid -->
+    @if (showProducts()) {
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        @for (product of products().slice(0,3); track product.id) {
+          <app-product-card [product]="product" />
+        }
+      </div>
+    }
+
+  </div>
+</section>

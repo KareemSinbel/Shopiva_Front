@@ -1,0 +1,138 @@
+<main class="min-h-screen p-margin-desktop bg-background overflow-x-hidden">
+
+  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <header class="flex flex-col md:flex-row md:items-center justify-between gap-gutter mb-margin-desktop">
+    <div>
+      <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tighter">User Management</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant">Oversee and manage your platform's active community.</p>
+    </div>
+
+    <div class="flex items-center gap-4 flex-wrap">
+      <!-- Search -->
+      <div class="relative group">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">
+          search
+        </span>
+        <input
+          type="text"
+          placeholder="Search by name or email..."
+          (input)="onSearchInput($any($event.target).value)"
+          class="glass-surface pl-12 pr-6 py-3 rounded-lg w-full md:w-80 font-body-md text-body-md outline-none focus:ring-2 focus:ring-primary/20 transition-all border border-outline-variant/20"
+        />
+      </div>
+
+      <!-- Invite button
+      <button
+        (click)="onInvite()"
+        class="bg-gradient-to-r from-primary to-secondary text-white flex items-center gap-2 px-6 py-3 rounded-lg font-label-md text-label-md shadow-md hover:shadow-lg transition-all active:scale-95"
+      >
+        <span class="material-symbols-outlined text-[20px]">person_add</span>
+        Invite New User
+      </button> -->
+    </div>
+  </header>
+
+  <!-- ── Error banner ─────────────────────────────────────────────────── -->
+  @if (error()) {
+    <div class="mb-6 glass-surface p-4 rounded-lg flex items-center gap-3 border border-error/20 bg-error-container/20">
+      <span class="material-symbols-outlined text-error flex-shrink-0">error_outline</span>
+      <p class="font-body-md text-on-surface flex-grow">{{ error() }}</p>
+      <button (click)="loadUsers()" class="font-label-md text-primary hover:underline">Retry</button>
+    </div>
+  }
+
+  <!-- ── Users table ───────────────────────────────────────────────────── -->
+  <div class="glass-surface rounded-xl shadow-xl border border-white/20 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container-low/50">
+            <th class="px-gutter py-5 font-label-md text-label-md text-on-surface-variant tracking-wider uppercase">User Profile</th>
+            <th class="px-gutter py-5 font-label-md text-label-md text-on-surface-variant tracking-wider uppercase">Email Address</th>
+            <th class="px-gutter py-5 font-label-md text-label-md text-on-surface-variant tracking-wider uppercase">Role</th>
+            <th class="px-gutter py-5 font-label-md text-label-md text-on-surface-variant tracking-wider uppercase">Status</th>
+            <th class="px-gutter py-5 font-label-md text-label-md text-on-surface-variant tracking-wider uppercase text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant/10">
+
+          <!-- Loading skeleton -->
+          @if (isLoading()) {
+            @for (i of [1,2,3,4,5]; track i) {
+              <tr class="animate-pulse">
+                <td class="px-gutter py-5">
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-surface-container-high flex-shrink-0"></div>
+                    <div class="space-y-2">
+                      <div class="h-4 bg-surface-container-high rounded w-32"></div>
+                      <div class="h-3 bg-surface-container-high rounded w-20"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-gutter py-5"><div class="h-4 bg-surface-container-high rounded w-40"></div></td>
+                <td class="px-gutter py-5"><div class="h-6 bg-surface-container-high rounded-full w-20"></div></td>
+                <td class="px-gutter py-5"><div class="h-4 bg-surface-container-high rounded w-16"></div></td>
+                <td class="px-gutter py-5"></td>
+              </tr>
+            }
+          }
+
+          <!-- Empty state -->
+          @if (!isLoading() && users().length === 0 && !error()) {
+            <tr>
+              <td colspan="5" class="px-gutter py-20 text-center">
+                <span class="material-symbols-outlined text-5xl text-outline block mb-3">group_off</span>
+                <p class="font-body-lg text-on-surface-variant">No users found.</p>
+                @if (searchQuery()) {
+                  <p class="font-label-md text-on-surface-variant mt-1">Try a different search term.</p>
+                }
+              </td>
+            </tr>
+          }
+
+          <!-- User rows -->
+          @if (!isLoading()) {
+            @for (user of users(); track user.id) {
+              <tr
+                app-user-row
+                [user]="user"
+                (edit)="onEdit($event)"
+                (suspend)="onRestrict($event)"
+                (reactivate)="onUnrestrict($event)"
+                (delete)="onDelete($event)"
+              ></tr>
+            }
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (!isLoading() && totalCount() > 0) {
+      <app-user-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [totalCount]="totalCount()"
+        [pageSize]="pageSize"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </div>
+
+  <!-- ── Insights ──────────────────────────────────────────────────────── -->
+  <!-- <app-user-insights
+    [insights]="insights()"
+    [isLoading]="insightsLoading()"
+  /> -->
+
+</main>
+
+<!-- Edit User Modal -->
+@if (editingUser(); as user) {
+  <app-user-edit-modal
+    [user]="user"
+    (close)="onEditModalClose()"
+    (updated)="onEditModalUpdated($event)"
+  />
+}

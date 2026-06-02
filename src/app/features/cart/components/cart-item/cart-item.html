@@ -1,0 +1,70 @@
+<div class="glass p-6 rounded-lg flex flex-col md:flex-row gap-6 hover:shadow-[0_12px_40px_0_rgba(0,62,199,0.06)] transition-all">
+
+  <!-- Image -->
+  <div class="w-full md:w-40 h-40 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+    <img
+      [src]="item.product.imageUrl"
+      [alt]="item.product.name"
+      class="w-full h-full object-cover"
+    />
+  </div>
+
+  <!-- Details -->
+  <div class="flex-grow flex flex-col justify-between py-1">
+    <div class="flex justify-between items-start">
+      <div>
+        <!-- <span class="font-label-sm text-label-sm text-secondary px-3 py-1 bg-secondary/10 rounded-full">
+          {{ item.product.badge }}
+        </span> -->
+        <h3 class="font-headline-md text-headline-md mt-2">{{ item.product.name }}</h3>
+        <!-- <p class="text-on-surface-variant font-body-md mt-1">{{ item.product.categoryName }}</p> -->
+      </div>
+
+      <!-- Price: support discountPrice -->
+      <div class="text-right">
+        <p class="font-headline-md text-headline-md text-primary">
+          {{ (item.product.discountPrice ?? item.product.price) | currency }}
+        </p>
+        @if (item.product.discountPrice) {
+          <p class="text-label-sm text-on-surface-variant line-through">
+            {{ item.product.price | currency }}
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Quantity + Remove -->
+    <div class="flex justify-between items-center mt-6">
+      <div class="flex items-center bg-surface-container rounded-full p-1 border border-outline-variant/30">
+        <button
+          (click)="changeQty(-1)"
+          [disabled]="quantity() <= 1 || isUpdating()"
+          class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-colors active:scale-90 disabled:opacity-40"
+          aria-label="Decrease quantity"
+        >
+          <span class="material-symbols-outlined text-sm">remove</span>
+        </button>
+        <span class="px-4 font-label-md min-w-[2.5rem] text-center">
+          {{ quantity().toString().padStart(2, '0') }}
+        </span>
+        <button
+          (click)="changeQty(1)"
+          [disabled]="quantity() >= item.product.stock || isUpdating()"
+          class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-colors active:scale-90 disabled:opacity-40"
+          aria-label="Increase quantity"
+        >
+          <span class="material-symbols-outlined text-sm">add</span>
+        </button>
+      </div>
+
+      <button
+        (click)="onRemove()"
+        [disabled]="isUpdating()"
+        class="text-error font-label-md flex items-center gap-2 hover:opacity-70 transition-opacity disabled:opacity-40"
+      >
+        <span class="material-symbols-outlined">delete</span>
+        Remove
+      </button>
+    </div>
+  </div>
+</div>

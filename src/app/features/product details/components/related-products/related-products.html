@@ -1,0 +1,71 @@
+<section class="mt-24 space-y-8">
+  <div class="flex justify-between items-end">
+    <div>
+      <h2 class="font-display-lg text-headline-lg text-on-surface">Related Collections</h2>
+      <p class="text-on-surface-variant font-body-md">Curated pieces that complement your aesthetic.</p>
+    </div>
+    <div class="flex gap-2">
+      <button
+        (click)="scrollLeft()"
+        class="p-3 border border-outline-variant rounded-full hover:bg-primary/5 transition-colors"
+        aria-label="Scroll left"
+      >
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <button
+        (click)="scrollRight()"
+        class="p-3 border border-outline-variant rounded-full hover:bg-primary/5 transition-colors"
+        aria-label="Scroll right"
+      >
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading skeleton -->
+  @if (isLoading()) {
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="glass-card rounded-lg overflow-hidden animate-pulse">
+          <div class="aspect-[3/4] bg-surface-container-high"></div>
+          <div class="p-4 space-y-2">
+            <div class="h-4 bg-surface-container-high rounded w-3/4"></div>
+            <div class="h-4 bg-surface-container-high rounded w-1/3"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error()) {
+    <div class="text-center py-10 text-on-surface-variant">
+      <span class="material-symbols-outlined text-4xl block mb-2">error_outline</span>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  <!-- Product grid -->
+  @if (!isLoading() && !error()) {
+    <div #carousel class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      @for (product of products(); track product.id) {
+        <div
+          class="glass-card rounded-lg overflow-hidden group cursor-pointer"
+          (click)="navigateToProduct(product.id)"
+        >
+          <div class="aspect-[3/4] overflow-hidden">
+            <img
+              [src]="product.imageUrls[0]"
+              [alt]="product.name"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+          </div>
+          <div class="p-4 space-y-2">
+            <h3 class="font-headline-md text-body-md text-on-surface">{{ product.name }}</h3>
+            <p class="text-primary font-label-md">{{ product.price | currency }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

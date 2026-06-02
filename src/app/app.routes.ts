@@ -21,6 +21,7 @@ import { ProductList } from './features/product-list/product-list';
 import { Payment } from './features/payment/pages/payment/payment';
 import { Cart } from './features/cart/components/cart/cart';
 import { UserManagement } from './features/dashboard/components/user-management/user-management';
+import { Profile } from './features/profile/profile';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,8 @@ export const routes: Routes = [
         { path: "product/:id", component: ProductDetailComponent, pathMatch: "full" },
         { path: "productlist", component: ProductList, pathMatch: "full" },
         { path: "cart", component: Cart, pathMatch: "full" },
+        { path: 'profile', component: Profile, canActivate: [authGuard], pathMatch: 'full' },
+
       ]
   },
   { path: "login", component: Login, pathMatch: "full" },

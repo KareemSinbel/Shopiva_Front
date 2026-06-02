@@ -1,0 +1,266 @@
+<div class="pt-24 px-margin-desktop pb-margin-desktop max-w-container-max mx-auto">
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="flex justify-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+  <div class="bg-error/10 border border-error rounded-lg p-4">
+    <p class="text-error font-body-md">{{ error() }}</p>
+  </div>
+  }
+
+  @if (profile(); as p) {
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+
+    <!-- Sidebar -->
+    <aside class="lg:col-span-3 space-y-4">
+      <div class="glass-card p-6 rounded-lg flex flex-col items-center gap-4 text-center">
+        <!-- Avatar -->
+        <div class="relative">
+          @if (p.profileImageUrl) {
+          <img [src]="p.profileImageUrl" [alt]="p.firstName"
+            class="w-24 h-24 rounded-full object-cover ring-4 ring-primary/20" />
+          } @else {
+          <div
+            class="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center text-primary text-3xl font-bold ring-4 ring-primary/10">
+            {{ initials }}
+          </div>
+          }
+          <!-- Email confirmed badge -->
+          @if (p.emailConfirmed) {
+          <span class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
+            title="Email confirmed">
+            <span class="material-symbols-outlined text-white text-[14px]">check</span>
+          </span>
+          }
+        </div>
+
+        <div>
+          <p class="font-headline-sm text-on-surface">{{ p.firstName }} {{ p.lastName }}</p>
+          <p class="text-label-sm text-on-surface-variant">{{ p.email }}</p>
+        </div>
+
+        <!-- Roles -->
+        <div class="flex flex-wrap gap-2 justify-center">
+          @for (role of p.roles; track role) {
+          <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-label-sm font-label-sm">
+            {{ role }}
+          </span>
+          }
+        </div>
+      </div>
+
+      <!-- Nav tabs -->
+      <div class="glass-card rounded-lg overflow-hidden">
+        <button (click)="setTab('info')" [class.bg-primary]="activeTab() === 'info'"
+          [class.text-on-primary]="activeTab() === 'info'"
+          [class.text-on-surface]="activeTab() !== 'info'"
+          class="w-full flex items-center gap-3 px-5 py-4 text-left font-label-md transition-colors hover:bg-primary/10">
+          <span class="material-symbols-outlined text-[20px]">person</span>
+          Personal Info
+        </button>
+        <button (click)="setTab('password')" [class.bg-primary]="activeTab() === 'password'"
+          [class.text-on-primary]="activeTab() === 'password'"
+          [class.text-on-surface]="activeTab() !== 'password'"
+          class="w-full flex items-center gap-3 px-5 py-4 text-left font-label-md transition-colors hover:bg-primary/10">
+          <span class="material-symbols-outlined text-[20px]">lock</span>
+          Change Password
+        </button>
+        <button (click)="setTab('image')" [class.bg-primary]="activeTab() === 'image'"
+          [class.text-on-primary]="activeTab() === 'image'"
+          [class.text-on-surface]="activeTab() !== 'image'"
+          class="w-full flex items-center gap-3 px-5 py-4 text-left font-label-md transition-colors hover:bg-primary/10">
+          <span class="material-symbols-outlined text-[20px]">image</span>
+          Profile Picture
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="lg:col-span-9">
+
+      <!-- Personal Info Tab -->
+      @if (activeTab() === 'info') {
+      <div class="glass-card p-8 rounded-lg space-y-6">
+        <h2 class="font-headline-md text-on-surface">Personal Information</h2>
+
+        @if (profileSuccess()) {
+        <div class="bg-green-500/10 border border-green-500 rounded-lg p-3">
+          <p class="text-green-600 font-body-sm">Profile updated successfully.</p>
+        </div>
+        }
+        @if (profileError()) {
+        <div class="bg-error/10 border border-error rounded-lg p-3">
+          <p class="text-error font-body-sm">{{ profileError() }}</p>
+        </div>
+        }
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="space-y-1">
+              <label class="font-label-md text-on-surface-variant text-label-sm">First Name *</label>
+              <input formControlName="firstName" type="text"
+                class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+              @if (profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched) {
+              <p class="text-error text-label-sm">First name is required.</p>
+              }
+            </div>
+            <div class="space-y-1">
+              <label class="font-label-md text-on-surface-variant text-label-sm">Last Name *</label>
+              <input formControlName="lastName" type="text"
+                class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+              @if (profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched) {
+              <p class="text-error text-label-sm">Last name is required.</p>
+              }
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-label-md text-on-surface-variant text-label-sm">Phone Number</label>
+            <input formControlName="phoneNumber" type="tel"
+              class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-label-md text-on-surface-variant text-label-sm">Address</label>
+            <input formControlName="address" type="text"
+              class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="space-y-1">
+              <label class="font-label-md text-on-surface-variant text-label-sm">City</label>
+              <input formControlName="city" type="text"
+                class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+            </div>
+            <div class="space-y-1">
+              <label class="font-label-md text-on-surface-variant text-label-sm">Country</label>
+              <input formControlName="country" type="text"
+                class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" [disabled]="profileSaving() || profileForm.invalid"
+              class="px-8 py-2.5 bg-primary text-on-primary rounded-lg font-label-md disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
+              {{ profileSaving() ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </div>
+      }
+
+      <!-- Change Password Tab -->
+      @if (activeTab() === 'password') {
+      <div class="glass-card p-8 rounded-lg space-y-6">
+        <h2 class="font-headline-md text-on-surface">Change Password</h2>
+
+        @if (passwordSuccess()) {
+        <div class="bg-green-500/10 border border-green-500 rounded-lg p-3">
+          <p class="text-green-600 font-body-sm">Password changed successfully.</p>
+        </div>
+        }
+        @if (passwordError()) {
+        <div class="bg-error/10 border border-error rounded-lg p-3">
+          <p class="text-error font-body-sm">{{ passwordError() }}</p>
+        </div>
+        }
+
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="space-y-5">
+          <div class="space-y-1">
+            <label class="font-label-md text-on-surface-variant text-label-sm">Current Password *</label>
+            <input formControlName="currentPassword" type="password"
+              class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+          </div>
+          <div class="space-y-1">
+            <label class="font-label-md text-on-surface-variant text-label-sm">New Password *</label>
+            <input formControlName="newPassword" type="password"
+              class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+            @if (passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched) {
+            <p class="text-error text-label-sm">Minimum 6 characters.</p>
+            }
+          </div>
+          <div class="space-y-1">
+            <label class="font-label-md text-on-surface-variant text-label-sm">Confirm New Password *</label>
+            <input formControlName="confirmNewPassword" type="password"
+              class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none font-body-md" />
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" [disabled]="passwordSaving() || passwordForm.invalid"
+              class="px-8 py-2.5 bg-primary text-on-primary rounded-lg font-label-md disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
+              {{ passwordSaving() ? 'Changing...' : 'Change Password' }}
+            </button>
+          </div>
+        </form>
+      </div>
+      }
+
+      <!-- Profile Image Tab -->
+      @if (activeTab() === 'image') {
+      <div class="glass-card p-8 rounded-lg space-y-6">
+        <h2 class="font-headline-md text-on-surface">Profile Picture</h2>
+
+        @if (imageSuccess()) {
+        <div class="bg-green-500/10 border border-green-500 rounded-lg p-3">
+          <p class="text-green-600 font-body-sm">Profile picture updated.</p>
+        </div>
+        }
+        @if (imageError()) {
+        <div class="bg-error/10 border border-error rounded-lg p-3">
+          <p class="text-error font-body-sm">{{ imageError() }}</p>
+        </div>
+        }
+
+        <div class="flex flex-col items-center gap-6">
+          <!-- Current / Preview -->
+          <div class="relative">
+            @if (previewUrl()) {
+            <img [src]="previewUrl()" alt="Preview"
+              class="w-32 h-32 rounded-full object-cover ring-4 ring-primary/30" />
+            } @else if (p.profileImageUrl) {
+            <img [src]="p.profileImageUrl" [alt]="p.firstName"
+              class="w-32 h-32 rounded-full object-cover ring-4 ring-primary/20" />
+            } @else {
+            <div
+              class="w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center text-primary text-4xl font-bold">
+              {{ initials }}
+            </div>
+            }
+          </div>
+
+          <!-- Upload -->
+          <label
+            class="cursor-pointer flex items-center gap-2 px-6 py-2.5 border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-[20px]">upload</span>
+            Choose Image
+            <input type="file" accept="image/*" class="hidden" (change)="onImageSelect($event)" />
+          </label>
+
+          <div class="flex gap-3">
+            @if (selectedImageFile()) {
+            <button (click)="uploadImage()" [disabled]="imageSaving()"
+              class="px-6 py-2.5 bg-primary text-on-primary rounded-lg font-label-md disabled:opacity-50 hover:opacity-90 transition-opacity">
+              {{ imageSaving() ? 'Uploading...' : 'Upload' }}
+            </button>
+            }
+            @if (p.profileImageUrl && !selectedImageFile()) {
+            <button (click)="removeImage()" [disabled]="imageSaving()"
+              class="px-6 py-2.5 border border-error text-error rounded-lg font-label-md disabled:opacity-50 hover:bg-error/10 transition-colors">
+              {{ imageSaving() ? 'Removing...' : 'Remove Picture' }}
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+      }
+
+    </div>
+  </div>
+  }
+</div>

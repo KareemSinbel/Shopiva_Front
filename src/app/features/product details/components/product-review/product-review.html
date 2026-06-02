@@ -1,0 +1,175 @@
+<section class="mt-16 space-y-10">
+  <h2 class="font-headline-lg text-headline-lg text-on-surface">Customer Reviews</h2>
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="flex justify-center py-12">
+    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+  <div class="bg-error/10 border border-error rounded-lg p-4">
+    <p class="text-error font-body-md">{{ error() }}</p>
+  </div>
+  }
+
+  @if (summary(); as s) {
+
+  <!-- Summary -->
+  <div class="glass-card p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="flex flex-col items-center justify-center gap-2">
+      <span class="text-6xl font-bold text-on-surface">{{ s.averageRating.toFixed(1) }}</span>
+      <div class="flex gap-1">
+        @for (star of stars; track star) {
+        <span class="material-symbols-outlined text-yellow-500"
+          [style.font-variation-settings]="s.averageRating >= star ? '\'FILL\' 1' : '\'FILL\' 0'">
+          star
+        </span>
+        }
+      </div>
+      <span class="text-on-surface-variant font-body-sm">{{ s.totalReviews }} reviews</span>
+    </div>
+
+    <div class="space-y-2">
+      @for (star of [5,4,3,2,1]; track star) {
+      <div class="flex items-center gap-3">
+        <span class="text-label-sm font-label-sm text-on-surface-variant w-4">{{ star }}</span>
+        <span class="material-symbols-outlined text-yellow-500 text-[16px]"
+          style="font-variation-settings: 'FILL' 1;">star</span>
+        <div class="flex-1 bg-surface-container rounded-full h-2 overflow-hidden">
+          <div class="bg-yellow-500 h-2 rounded-full transition-all duration-500"
+            [style.width.%]="getRatingBreakdownPercent(star)">
+          </div>
+        </div>
+        <span class="text-label-sm text-on-surface-variant w-8">
+          {{ s.ratingBreakdown[star]  }}
+        </span>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Review Form — Customers only, not already reviewed (unless editing) -->
+  @if (isLoggedIn && isCustomer && (!userHasReviewed || editingReviewId() !== null)) {
+  <div class="glass-card p-6 rounded-lg space-y-4">
+    <h3 class="font-headline-md text-on-surface">
+      {{ editingReviewId() !== null ? 'Edit Your Review' : 'Write a Review' }}
+    </h3>
+
+    @if (submitError()) {
+    <div class="bg-error/10 border border-error rounded-lg p-3">
+      <p class="text-error font-body-sm">{{ submitError() }}</p>
+    </div>
+    }
+
+    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-4">
+      <!-- Star Selector -->
+      <div class="flex gap-1" (mouseleave)="clearHover()">
+        @for (star of stars; track star) {
+        <button type="button" (click)="setRating(star)" (mouseenter)="setHover(star)"
+          class="focus:outline-none transition-transform hover:scale-110">
+          <span class="material-symbols-outlined text-[32px]" [class.text-yellow-500]="getStarState(star) !== 'empty'"
+            [class.text-outline-variant]="getStarState(star) === 'empty'"
+            [style.font-variation-settings]="getStarState(star) !== 'empty' ? '\'FILL\' 1' : '\'FILL\' 0'">
+            star
+          </span>
+        </button>
+        }
+      </div>
+      @if (reviewForm.get('rating')?.invalid && reviewForm.get('rating')?.touched) {
+      <p class="text-error text-label-sm">Please select a rating.</p>
+      }
+
+      <!-- Comment -->
+      <textarea formControlName="comment" rows="4" placeholder="Share your experience (optional)"
+        class="w-full px-4 py-3 bg-surface-container rounded-lg border border-outline-variant focus:border-primary focus:outline-none resize-none font-body-md">
+      </textarea>
+      @if (reviewForm.get('comment')?.hasError('maxlength')) {
+      <p class="text-error text-label-sm">Comment must be under 1000 characters.</p>
+      }
+
+      <div class="flex gap-3">
+        <button type="submit" [disabled]="submitting() || reviewForm.invalid"
+          class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
+          {{ submitting() ? 'Submitting...' : editingReviewId() !== null ? 'Update Review' : 'Submit Review' }}
+        </button>
+        @if (editingReviewId() !== null) {
+        <button type="button" (click)="cancelEdit()"
+          class="px-6 py-2 border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-colors">
+          Cancel
+        </button>
+        }
+      </div>
+    </form>
+  </div>
+  }
+
+  @if (isLoggedIn && !isCustomer && !isAdmin) {
+  <p class="text-on-surface-variant font-body-md">Only customers can leave reviews.</p>
+  }
+
+  @if (!isLoggedIn) {
+  <p class="text-on-surface-variant font-body-md">
+    <a routerLink="/login" class="text-primary underline">Sign in</a> to leave a review.
+  </p>
+  }
+
+  <!-- Reviews List -->
+  <div class="space-y-4">
+    @for (review of s.reviews; track review.id) {
+    <div class="glass-card p-6 rounded-lg space-y-3">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+            {{ review.customerName.charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <p class="font-label-md text-on-surface">{{ review.customerName }}</p>
+            <p class="text-label-sm text-on-surface-variant">
+              {{ review.createdAt | date:'mediumDate' }}
+              @if (review.updatedAt) { <span>(edited)</span> }
+            </p>
+          </div>
+        </div>
+
+        <!-- Stars -->
+        <div class="flex gap-0.5">
+          @for (star of stars; track star) {
+          <span class="material-symbols-outlined text-yellow-500 text-[18px]"
+            [style.font-variation-settings]="review.rating >= star ? '\'FILL\' 1' : '\'FILL\' 0'">
+            star
+          </span>
+          }
+        </div>
+      </div>
+
+      @if (review.comment) {
+      <p class="font-body-md text-on-surface-variant leading-relaxed">{{ review.comment }}</p>
+      }
+
+      <!-- Edit / Delete — owner or admin -->
+      @if (review.customerId === currentUserId || isAdmin) {
+      <div class="flex gap-3 pt-2">
+        @if (review.customerId === currentUserId) {
+        <button (click)="startEdit(review)" class="flex items-center gap-1 text-primary font-label-sm hover:underline">
+          <span class="material-symbols-outlined text-[16px]">edit</span> Edit
+        </button>
+        }
+        <button (click)="deleteReview(review.id)"
+          class="flex items-center gap-1 text-error font-label-sm hover:underline">
+          <span class="material-symbols-outlined text-[16px]">delete</span> Delete
+        </button>
+      </div>
+      }
+    </div>
+    } @empty {
+    <div class="text-center py-12">
+      <span class="material-symbols-outlined text-on-surface-variant text-[48px] block mb-3">rate_review</span>
+      <p class="text-on-surface-variant font-body-md">No reviews yet. Be the first to review!</p>
+    </div>
+    }
+  </div>
+  }
+</section>

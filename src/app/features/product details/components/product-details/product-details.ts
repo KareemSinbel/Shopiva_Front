@@ -10,6 +10,7 @@ import { ProductService } from '../../../../core/services/product-service';
 import { Product } from '../../../products/models/product';
 import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 import { CartService } from '../../../../core/services/cart-service';
+import { ProductReview } from '../product-review/product-review';
 
 
 @Component({
@@ -21,8 +22,9 @@ import { CartService } from '../../../../core/services/cart-service';
     StarRatingComponent,
     QuantitySelectorComponent,
     RelatedProductsComponent,
-    GradientButton
-],
+    GradientButton,
+    ProductReview
+  ],
   templateUrl: './product-details.html',
   styleUrl: './product-details.css',
 })
@@ -39,8 +41,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   private quantity = 1;
 
   readonly perks = [
-    { icon: 'local_shipping', title: 'Free Shipping',   subtitle: 'On all luxury orders' },
-    { icon: 'verified_user',  title: '2 Year Warranty', subtitle: 'Full coverage protection' },
+    { icon: 'local_shipping', title: 'Free Shipping', subtitle: 'On all luxury orders' },
+    { icon: 'verified_user', title: '2 Year Warranty', subtitle: 'Full coverage protection' },
   ];
 
   ngOnInit(): void {

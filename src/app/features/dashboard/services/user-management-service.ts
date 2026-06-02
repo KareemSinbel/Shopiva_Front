@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiConfig } from '../../../core/services/api-config';
 import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
-import { UserApiResponse, UserInsights } from '../models/user';
+import { UserApiResponse, UserInsights, User } from '../models/user';
 
 
 @Injectable({ providedIn: 'root' })
@@ -40,6 +40,13 @@ export class UserManagementService {
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(
       `${this.apiConfig.baseUrl}${API_ENDPOINTS.admin.users.delete(userId)}`
+    );
+  }
+
+  updateUser(userId: number, payload: any): Observable<User> {
+    return this.http.put<User>(
+      `${this.apiConfig.baseUrl}${API_ENDPOINTS.admin.users.update(userId)}`,
+      payload
     );
   }
 }

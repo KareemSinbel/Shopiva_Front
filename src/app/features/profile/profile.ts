@@ -1,8 +1,9 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProfileResponseDto } from './profile.models';
 import { ProfileService } from '../../core/services/profile-service';
+import { ToastService } from '../../shared/services/toast.service';
 
 
 @Component({
@@ -48,6 +49,8 @@ export class Profile implements OnInit {
   imageSaving = signal(false);
   imageSuccess = signal(false);
   imageError = signal<string | null>(null);
+
+  private toastService = inject(ToastService);
 
   constructor(private profileService: ProfileService) {}
 
@@ -95,15 +98,23 @@ export class Profile implements OnInit {
     this.profileSuccess.set(false);
     this.profileError.set(null);
 
-    this.profileService.updateProfile(this.profileForm.value as any).subscribe({
+    const payload = this.profileForm.value as any;
+    console.log('Sending profile update:', payload); // DEBUG
+
+    this.profileService.updateProfile(payload).subscribe({
       next: (data) => {
+        console.log('Profile updated successfully:', data); // DEBUG
         this.profile.set(data);
         this.profileSaving.set(false);
         this.profileSuccess.set(true);
+        this.toastService.success('Profile updated successfully!');
       },
       error: (err) => {
-        this.profileError.set(err?.error?.detail ?? 'Failed to update profile.');
+        console.error('Profile update error:', err); // DEBUG
+        const errorMsg = err?.error?.detail ?? err?.error?.message ?? 'Failed to update profile.';
+        this.profileError.set(errorMsg);
         this.profileSaving.set(false);
+        this.toastService.error(errorMsg);
       },
     });
   }
@@ -113,6 +124,7 @@ export class Profile implements OnInit {
     const { newPassword, confirmNewPassword } = this.passwordForm.value;
     if (newPassword !== confirmNewPassword) {
       this.passwordError.set('Passwords do not match.');
+      this.toastService.error('Passwords do not match.');
       return;
     }
 
@@ -125,10 +137,13 @@ export class Profile implements OnInit {
         this.passwordForm.reset();
         this.passwordSaving.set(false);
         this.passwordSuccess.set(true);
+        this.toastService.success('Password changed successfully!');
       },
       error: (err) => {
-        this.passwordError.set(err?.error?.detail ?? 'Failed to change password.');
+        const errorMsg = err?.error?.detail ?? err?.error?.message ?? 'Failed to change password.';
+        this.passwordError.set(errorMsg);
         this.passwordSaving.set(false);
+        this.toastService.error(errorMsg);
       },
     });
   }
@@ -159,10 +174,13 @@ export class Profile implements OnInit {
         this.imageSuccess.set(true);
         this.selectedImageFile.set(null);
         this.previewUrl.set(null);
+        this.toastService.success('Profile picture updated successfully!');
       },
       error: (err) => {
-        this.imageError.set(err?.error?.detail ?? 'Failed to upload image.');
+        const errorMsg = err?.error?.detail ?? err?.error?.message ?? 'Failed to upload image.';
+        this.imageError.set(errorMsg);
         this.imageSaving.set(false);
+        this.toastService.error(errorMsg);
       },
     });
   }
@@ -177,10 +195,13 @@ export class Profile implements OnInit {
         this.profile.set(data);
         this.imageSaving.set(false);
         this.imageSuccess.set(true);
+        this.toastService.success('Profile picture removed successfully!');
       },
       error: (err) => {
-        this.imageError.set(err?.error?.detail ?? 'Failed to remove image.');
+        const errorMsg = err?.error?.detail ?? err?.error?.message ?? 'Failed to remove image.';
+        this.imageError.set(errorMsg);
         this.imageSaving.set(false);
+        this.toastService.error(errorMsg);
       },
     });
   }

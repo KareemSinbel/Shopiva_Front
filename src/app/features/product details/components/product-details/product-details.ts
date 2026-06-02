@@ -11,6 +11,7 @@ import { Product } from '../../../products/models/product';
 import { GradientButton } from "../../../../shared/components/gradient-button/gradient-button";
 import { CartService } from '../../../../core/services/cart-service';
 import { ProductReview } from '../product-review/product-review';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
+  private toastService = inject(ToastService);
   private readonly destroy$ = new Subject<void>();
 
 
@@ -93,18 +95,24 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
           // Item already in cart — update quantity instead of adding new row
           const newQty = existing.quantity + this.quantity;
           this.cartService.updateItemQuantity(product.id, newQty, existing.id).subscribe({
-            next: () => console.log('Quantity updated:', newQty),
-            error: () => console.error('Failed to update quantity'),
+            next: () => {
+              this.toastService.success(`Updated ${product.name} quantity to ${newQty}`);
+              this.quantity = 1; // Reset quantity
+            },
+            error: () => this.toastService.error('Failed to update quantity'),
           });
         } else {
           // New item — add it
           this.cartService.addToCart(product.id, this.quantity, unitPrice).subscribe({
-            next: () => console.log('Added to cart:', { productId: product.id, quantity: this.quantity }),
-            error: () => console.error('Failed to add to cart'),
+            next: () => {
+              this.toastService.success(`${product.name} (x${this.quantity}) added to cart!`);
+              this.quantity = 1; // Reset quantity
+            },
+            error: () => this.toastService.error('Failed to add to cart. Please try again.'),
           });
         }
       },
-      error: () => console.error('Failed to fetch cart'),
+      error: () => this.toastService.error('Failed to fetch cart. Please try again.'),
     });
   }
 }

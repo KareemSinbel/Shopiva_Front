@@ -77,13 +77,13 @@
       </div>
 
       <!-- Right: Order Summary -->
-      <!-- (promoApplied)="onPromoApplied($event)" -->
       <div class="lg:col-span-4">
         <app-order-summary
           #orderSummaryRef
           [summary]="orderSummary()"
           [itemCount]="cartItems().length"
           (checkout)="onCheckout()"
+          (promoApplied)="onPromoApplied($event)"
         />
       </div>
 

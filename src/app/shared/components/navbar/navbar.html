@@ -29,8 +29,13 @@
       </li>
     </ul>
     <div class="flex items-center gap-4">
-      <button routerLink="/cart" class="p-2 rounded-full hover:bg-white/10 transition-all active:scale-95">
+      <button routerLink="/cart" class="p-2 rounded-full hover:bg-white/10 transition-all active:scale-95 relative">
         <span class="material-symbols-outlined text-primary">shopping_cart</span>
+        @if (cartCount() > 0) {
+          <span class="absolute -top-1 -right-1 bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+            {{ cartCount() }}
+          </span>
+        }
       </button>
       <button class="p-2 rounded-full hover:bg-white/10 transition-all active:scale-95">
         <span class="material-symbols-outlined text-primary">notifications</span>

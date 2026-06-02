@@ -106,20 +106,24 @@ export class Cart implements OnInit, OnDestroy {
       .subscribe({error:() => this.loadCart()});
   }
 
-  // onPromoApplied(code: string): void {
-  //   this.cartService.applyPromoCode(code)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (data) => {
-  //         this.cartItems.set(data.items);
-  //         this.discountAmount.set(data.discountAmount ?? 0);
-  //         this.orderSummaryRef()?.setPromoResult(true);
-  //       },
-  //       error: () => {
-  //         this.orderSummaryRef()?.setPromoResult(false, 'Invalid or expired promo code.');
-  //       },
-  //     });
-  // }
+  onPromoApplied(code: string): void {
+    console.log('Applying promo code:', code); // DEBUG
+    this.cartService.applyPromoCode(code)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          console.log('Promo code applied successfully!', data); // DEBUG
+          this.cartItems.set(data.items);
+          this.discountAmount.set(data.discountAmount ?? 0);
+          this.orderSummaryRef()?.setPromoResult(true);
+        },
+        error: (err) => {
+          const errorMsg = err?.error?.message || 'Invalid or expired promo code.';
+          console.error('Promo code error:', err); // DEBUG
+          this.orderSummaryRef()?.setPromoResult(false, errorMsg);
+        },
+      });
+  }
 
   onCheckout(): void {
     // TODO: navigate to shipping step

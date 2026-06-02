@@ -46,7 +46,7 @@
     <div class="users-card">
       <div class="card-header">
         <h2>Recent Users</h2>
-        <button class="view-all-btn">View All Users</button>
+        <button class="view-all-btn" (click)="goToViewAllUsers()">View All Users</button>
       </div>
       @if (isLoadingUsers()) {
         <div class="skeleton-rows">
@@ -178,6 +178,10 @@
         <div class="banner-empty">
           <span class="material-symbols-outlined">image_not_supported</span>
           <p>No live banner</p>
+          <button class="add-banner-btn" (click)="openBannerModal()">
+            <span class="material-symbols-outlined">add</span>
+            Add Banner
+          </button>
         </div>
       }
 
@@ -203,6 +207,14 @@
       </div>
 
       <div class="modal-body">
+        <!-- Error Message -->
+        @if (promoError()) {
+          <div class="error-banner">
+            <span class="material-symbols-outlined">error</span>
+            <p>{{ promoError() }}</p>
+          </div>
+        }
+
         <div class="form-group">
           <label>Code <span class="required">*</span></label>
           <input
@@ -211,6 +223,7 @@
             placeholder="e.g. SUMMER20"
             class="form-input"
             style="text-transform: uppercase"
+            [disabled]="isSavingPromo()"
           />
         </div>
 
@@ -221,6 +234,7 @@
             [(ngModel)]="promoForm.description"
             placeholder="e.g. 20% Off Storewide"
             class="form-input"
+            [disabled]="isSavingPromo()"
           />
         </div>
 
@@ -233,6 +247,7 @@
             min="0"
             max="100"
             class="form-input"
+            [disabled]="isSavingPromo()"
           />
         </div>
 
@@ -242,18 +257,19 @@
             type="datetime-local"
             [(ngModel)]="promoForm.expiresAt"
             class="form-input"
+            [disabled]="isSavingPromo()"
           />
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn-cancel" (click)="closePromoModal()">Cancel</button>
+        <button class="btn-cancel" (click)="closePromoModal()" [disabled]="isSavingPromo()">Cancel</button>
         <button
           class="btn-save"
           (click)="savePromo()"
-          [disabled]="isSavingPromo || !promoForm.code || !promoForm.description"
+          [disabled]="isSavingPromo() || !promoForm.code || !promoForm.description"
         >
-          @if (isSavingPromo) {
+          @if (isSavingPromo()) {
             <span class="material-symbols-outlined spinning">progress_activity</span>
             Saving...
           } @else {
@@ -264,4 +280,14 @@
 
     </div>
   </div>
+}
+
+<!-- ══════════════════════════════
+     Add Banner Modal
+══════════════════════════════ -->
+@if (showBannerModal) {
+  <app-banner-modal
+    (close)="closeBannerModal()"
+
+  />
 }

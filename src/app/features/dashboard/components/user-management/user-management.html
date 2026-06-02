@@ -127,3 +127,12 @@
   /> -->
 
 </main>
+
+<!-- Edit User Modal -->
+@if (editingUser(); as user) {
+  <app-user-edit-modal
+    [user]="user"
+    (close)="onEditModalClose()"
+    (updated)="onEditModalUpdated($event)"
+  />
+}

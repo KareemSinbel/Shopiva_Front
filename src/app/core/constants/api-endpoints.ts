@@ -7,6 +7,14 @@ export const API_ENDPOINTS = {
     verifyOtp: '/auth/verify-otp',
   },
 
+  profile: {
+    get: '/profile',
+    update: '/profile',
+    changePassword: '/profile/change-password',
+    updateImage: '/profile/image',
+    removeImage: '/profile/image',
+  },
+
   products: {
     getAll: '/products',
     getById: (id: number) => `/products/${id}`,
@@ -31,7 +39,8 @@ export const API_ENDPOINTS = {
     users:
     {
       getAll:      '/admin/users',
-      restrict:     (id: number) => `/admin/users/${id}/restrict`,
+      restrict:    (id: number) => `/admin/users/${id}/restrict`,
+      update:      (id: number) => `/admin/users/${id}`,
       delete:      (id: number) => `/admin/users/${id}`,
     }
   }

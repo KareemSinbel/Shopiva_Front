@@ -35,12 +35,17 @@ export class OrderSummary {
 
   /** Called by the parent after API responds to promo attempt */
   setPromoResult(success: boolean, errorMsg?: string): void {
+    console.log('Promo result received:', { success, errorMsg }); // DEBUG
     this.isApplyingPromo.set(false);
     if (success) {
       this.promoSuccess.set(true);
       this.promoInput = '';
+      // Auto-hide success message after 3 seconds
+      setTimeout(() => this.promoSuccess.set(false), 3000);
     } else {
-      this.promoError.set(errorMsg ?? 'Invalid promo code.');
+      this.promoError.set(errorMsg ?? 'Invalid or expired promo code.');
+      // Auto-hide error message after 5 seconds
+      setTimeout(() => this.promoError.set(null), 5000);
     }
   }
 }

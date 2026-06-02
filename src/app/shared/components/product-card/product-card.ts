@@ -3,6 +3,7 @@ import { Product } from '../../../features/products/models/product';
 import { CurrencyPipe } from '@angular/common';
 import { CartService } from '../../../core/services/cart-service';
 import { Router } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-product-card',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 export class ProductCard {
   private cartService = inject(CartService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
   isCardActive = false;
   @Input({ required: true }) product!: Product;
 
@@ -33,7 +35,14 @@ export class ProductCard {
   addToCart(event: MouseEvent): void {
     //PREVENT CARD CLICK NAVIGATION
     event.stopPropagation();
-    this.cartService.addToCart(this.product.id, 1, this.product.discountPrice ?? this.product.price).subscribe();
+    this.cartService.addToCart(this.product.id, 1, this.product.discountPrice ?? this.product.price).subscribe({
+      next: () => {
+        this.toastService.success(`${this.product.name} added to cart!`);
+      },
+      error: () => {
+        this.toastService.error('Failed to add to cart. Please try again.');
+      }
+    });
   }
 
   onCardClick(): void {

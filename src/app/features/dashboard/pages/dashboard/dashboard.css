@@ -692,6 +692,33 @@
 .banner-empty .material-symbols-outlined { font-size: 48px; }
 .banner-empty p { font-family: 'Inter', sans-serif; font-size: 14px; margin: 0; }
 
+/* Add Banner Button */
+.add-banner-btn {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: #003ec7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.add-banner-btn:hover {
+  background: #002b99;
+  box-shadow: 0 4px 12px rgba(0, 62, 199, 0.3);
+}
+
+.add-banner-btn span {
+  font-size: 20px;
+}
+
 /* ── Spinning ── */
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -772,6 +799,28 @@
   gap: 16px;
 }
 
+/* Error Banner */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #ffdad6;
+  border: 1px solid #ba1a1a;
+  border-radius: 8px;
+  color: #ba1a1a;
+}
+
+.error-banner span {
+  flex-shrink: 0;
+}
+
+.error-banner p {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -804,6 +853,12 @@
   border-color: #003ec7;
   box-shadow: 0 0 0 3px rgba(0, 62, 199, 0.1);
   background: white;
+}
+
+.form-input:disabled {
+  background: #eceef0;
+  color: #737688;
+  cursor: not-allowed;
 }
 
 .form-input::placeholder { color: #737688; }

@@ -9,9 +9,11 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { UserRow } from '../user-row/user-row';
 import { UserPagination } from '../user-pagination/user-pagination';
+import { UserEditModal } from '../user-edit-modal/user-edit-modal';
 import { UserManagementService } from '../../services/user-management-service';
 import { User, UserInsights } from '../../models/user';
-
+import { ToastService } from '../../../../shared/services/toast.service';
+import { Router } from '@angular/router';
 
 const PAGE_SIZE = 10;
 
@@ -22,51 +24,51 @@ const PAGE_SIZE = 10;
     FormsModule,
     UserRow,
     UserPagination,
+    UserEditModal,
   ],
   templateUrl: './user-management.html',
 })
 export class UserManagement implements OnInit, OnDestroy {
   private readonly userService = inject(UserManagementService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
   private readonly searchInput$ = new Subject<string>();
 
-  // ── Signals ────────────────────────────────────────────────────────────
-  readonly users         = signal<User[]>([]);
-  readonly insights      = signal<UserInsights | null>(null);
-  readonly isLoading     = signal(false);
+  readonly users = signal<User[]>([]);
+  readonly insights = signal<UserInsights | null>(null);
+  readonly isLoading = signal(false);
   readonly insightsLoading = signal(false);
-  readonly error         = signal<string | null>(null);
-  readonly currentPage   = signal(1);
-  readonly totalCount    = signal(0);
-  readonly totalPages    = signal(1);
-  readonly searchQuery   = signal('');
-  readonly actioningId   = signal<number | null>(null); // row being mutated
-  // ────────────────────────────────────────────────────────────────────────
+  readonly error = signal<string | null>(null);
+  readonly currentPage = signal(1);
+  readonly totalCount = signal(0);
+  readonly totalPages = signal(1);
+  readonly searchQuery = signal('');
+  readonly actioningId = signal<number | null>(null);
+  readonly editingUser = signal<User | null>(null);
 
   readonly pageSize = PAGE_SIZE;
 
   ngOnInit(): void {
-    //this.loadInsights();
     this.loadUsers();
 
-    // Debounce search so we don't fire on every keystroke
-    this.searchInput$.pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      takeUntil(this.destroy$),
-    ).subscribe(query => {
-      this.searchQuery.set(query);
-      this.currentPage.set(1);
-      this.loadUsers();
-    });
+    this.searchInput$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((query) => {
+        this.searchQuery.set(query);
+        this.currentPage.set(1);
+        this.loadUsers();
+      });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  // ── Data loading ───────────────────────────────────────────────────────
 
   loadUsers(): void {
     this.isLoading.set(true);
@@ -89,86 +91,126 @@ export class UserManagement implements OnInit, OnDestroy {
       });
   }
 
-  // loadInsights(): void {
-  //   this.insightsLoading.set(true);
-  //   this.userService.getInsights().pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (data) => { this.insights.set(data); this.insightsLoading.set(false); },
-  //     error: () => this.insightsLoading.set(false),
-  //   });
-  // }
-
-  // ── Search ─────────────────────────────────────────────────────────────
-
   onSearchInput(value: string): void {
     this.searchInput$.next(value);
   }
 
-  // ── Pagination ─────────────────────────────────────────────────────────
-
   onPageChange(page: number): void {
     if (page < 1 || page > this.totalPages()) return;
+
     this.currentPage.set(page);
     this.loadUsers();
   }
 
-  // ── User actions ───────────────────────────────────────────────────────
-
   onEdit(user: User): void {
-    // TODO: open edit modal / navigate to edit route
-    console.log('Edit user:', user.id);
+    this.editingUser.set(user);
+  }
+
+  onEditModalClose(): void {
+    this.editingUser.set(null);
+  }
+
+  onEditModalUpdated(updatedUser: User): void {
+    this.users.update((list) =>
+      list.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+    );
+
+    this.editingUser.set(null);
+
+    this.toastService.success(
+      `${updatedUser.firstName} ${updatedUser.lastName} updated successfully`
+    );
   }
 
   onRestrict(user: User): void {
     this.actioningId.set(user.id);
-    this.userService.restrictUser(user.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        // Optimistic update
-        this.users.update(list =>
-          list.map(u => u.id === user.id ? { ...u, isRestricted: true as const } : u)
-        );
-        this.actioningId.set(null);
-      },
-      error: () => this.actioningId.set(null),
-    });
+
+    this.userService
+      .restrictUser(user.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.users.update((list) =>
+            list.map((u) =>
+              u.id === user.id
+                ? { ...u, isRestricted: true }
+                : u
+            )
+          );
+
+          this.actioningId.set(null);
+
+          this.toastService.success(
+            `${user.firstName} ${user.lastName} has been suspended`
+          );
+        },
+        error: () => {
+          this.actioningId.set(null);
+          this.toastService.error('Failed to suspend user');
+        },
+      });
   }
 
   onUnrestrict(user: User): void {
     this.actioningId.set(user.id);
-    this.userService.unrestrictUser(user.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        this.users.update(list =>
-          list.map(u => u.id === user.id ? { ...u, isRestricted: false as const } : u)
-        );
-        this.actioningId.set(null);
-      },
-      error: () => this.actioningId.set(null),
-    });
+
+    this.userService
+      .unrestrictUser(user.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.users.update((list) =>
+            list.map((u) =>
+              u.id === user.id
+                ? { ...u, isRestricted: false }
+                : u
+            )
+          );
+
+          this.actioningId.set(null);
+
+          this.toastService.success(
+            `${user.firstName} ${user.lastName} has been reactivated`
+          );
+        },
+        error: () => {
+          this.actioningId.set(null);
+          this.toastService.error('Failed to reactivate user');
+        },
+      });
   }
 
   onDelete(user: User): void {
-    if (!confirm(`Delete ${user.firstName + " " + user.lastName}? This cannot be undone.`)) return;
+    const confirmed = confirm(
+      `Delete ${user.firstName} ${user.lastName}? This cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
     this.actioningId.set(user.id);
 
-    // Optimistic removal
-    this.users.update(list => list.filter(u => u.id !== user.id));
-    this.totalCount.update(n => n - 1);
+    this.users.update((list) =>
+      list.filter((u) => u.id !== user.id)
+    );
 
-    this.userService.deleteUser(user.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => this.actioningId.set(null),
-      error: () => {
-        // Revert — reload
-        this.actioningId.set(null);
-        this.loadUsers();
-      },
-    });
+    this.totalCount.update((count) => count - 1);
+
+    this.userService
+      .deleteUser(user.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.actioningId.set(null);
+
+          this.toastService.success(
+            `${user.firstName} ${user.lastName} has been deleted`
+          );
+        },
+        error: () => {
+          this.actioningId.set(null);
+          this.loadUsers();
+          this.toastService.error('Failed to delete user');
+        },
+      });
   }
-
-  // onInvite(): void {
-  //   const email = prompt('Enter email address to invite:');
-  //   if (!email?.trim()) return;
-  //   this.userService.inviteUser(email.trim()).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: () => alert(`Invitation sent to ${email}`),
-  //     error: () => alert('Failed to send invitation.'),
-  //   });
-  // }
 }

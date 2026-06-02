@@ -2,7 +2,10 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { timeout } from 'rxjs/operators';
 import { Footer } from "../../../../shared/components/footer/footer";
+import { BannerModal } from '../../components/banner-modal/banner-modal';
 
 const API = 'https://localhost:7259/api';
 
@@ -47,7 +50,7 @@ interface Banner {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, Footer],
+  imports: [CommonModule, FormsModule, Footer, BannerModal],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -66,7 +69,11 @@ export class Dashboard implements OnInit {
   // ── Promo Modal ──
   showPromoModal = false;
   promoForm = { code: '', description: '', discountPercent: 0, expiresAt: '' };
-  isSavingPromo = false;
+  isSavingPromo = signal(false);
+  promoError = signal<string | null>(null);
+
+  // ── Banner Modal ──
+  showBannerModal = false;
 
   // ── Confirm User ──
   confirmingUserId: string | null = null;
@@ -101,13 +108,18 @@ export class Dashboard implements OnInit {
     ];
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     this.loadOverview();
     this.loadRecentUsers();
     this.loadPromoCodes();
     this.loadLiveBanner();
+  }
+
+  // Navigate to View All Users
+  goToViewAllUsers(): void {
+    this.router.navigate(['/admin/users']);
   }
 
   loadOverview() {
@@ -143,11 +155,23 @@ export class Dashboard implements OnInit {
   closePromoModal() {
     this.showPromoModal = false;
     this.promoForm = { code: '', description: '', discountPercent: 0, expiresAt: '' };
+    this.promoError.set(null);
+  }
+
+  // ── Banner Modal ──
+  openBannerModal() { this.showBannerModal = true; }
+  closeBannerModal() { this.showBannerModal = false; }
+
+  onBannerCreated(banner: Banner) {
+    this.liveBanner = banner;
+    this.showBannerModal = false;
   }
 
   savePromo() {
     if (!this.promoForm.code || !this.promoForm.description) return;
-    this.isSavingPromo = true;
+    this.isSavingPromo.set(true);
+    this.promoError.set(null);
+    console.log('Sending promo:', this.promoForm); // DEBUG
 
     const body = {
       code: this.promoForm.code,
@@ -156,14 +180,22 @@ export class Dashboard implements OnInit {
       expiresAt: this.promoForm.expiresAt || null
     };
 
-    this.http.post<PromoCode>(`${API}/Dashboard/promo-codes`, body).subscribe({
-      next: (newPromo) => {
-        this.promoCodes.unshift(newPromo);
-        this.isSavingPromo = false;
-        this.closePromoModal();
-      },
-      error: () => { this.isSavingPromo = false; }
-    });
+    this.http.post<PromoCode>(`${API}/Dashboard/promo-codes`, body)
+      .pipe(timeout(10000)) // 10s timeout
+      .subscribe({
+        next: (newPromo) => {
+          console.log('Promo created:', newPromo); // DEBUG
+          this.promoCodes.unshift(newPromo);
+          this.isSavingPromo.set(false);
+          this.closePromoModal();
+        },
+        error: (err) => {
+          const errorMsg = err?.error?.message || 'Failed to save promo code. Please try again.';
+          console.error('Promo save error:', err); // DEBUG
+          this.promoError.set(errorMsg);
+          this.isSavingPromo.set(false);
+        }
+      });
   }
 
   // ── Confirm User ──

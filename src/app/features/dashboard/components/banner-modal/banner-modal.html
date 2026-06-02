@@ -1,0 +1,113 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h3>Add Banner</h3>
+      <button class="modal-close" (click)="onClose()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <!-- Error Message -->
+      @if (error()) {
+        <div class="error-banner">
+          <span class="material-symbols-outlined">error</span>
+          <p>{{ error() }}</p>
+        </div>
+      }
+
+      @if (form(); as fg) {
+        <form [formGroup]="fg" class="form-container">
+
+          <!-- Title -->
+          <div class="form-group">
+            <label>Title <span class="required">*</span></label>
+            <input
+              type="text"
+              formControlName="title"
+              placeholder="Enter banner title"
+              class="form-input"
+              [disabled]="isSaving()"
+            />
+            @if (fg.get('title')?.invalid && fg.get('title')?.touched) {
+              <p class="error-text">Title is required (min 3 chars)</p>
+            }
+          </div>
+
+          <!-- Subtitle -->
+          <div class="form-group">
+            <label>Subtitle <span class="optional">(optional)</span></label>
+            <input
+              type="text"
+              formControlName="subTitle"
+              placeholder="Enter banner subtitle"
+              class="form-input"
+              [disabled]="isSaving()"
+            />
+          </div>
+
+          <!-- Image Upload -->
+          <div class="form-group">
+            <label>Banner Image <span class="required">*</span></label>
+            <div class="image-upload">
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                class="file-input"
+                [disabled]="isSaving()"
+              />
+              <div class="upload-area">
+                <span class="material-symbols-outlined">image</span>
+                <p>Click to select image</p>
+                <p class="upload-hint">PNG, JPG, GIF up to 5MB</p>
+              </div>
+            </div>
+            @if (imagePreview()) {
+              <div class="image-preview">
+                <img [src]="imagePreview()" [alt]="'Banner preview'" />
+              </div>
+            }
+          </div>
+
+          <!-- Is Live Toggle -->
+          <div class="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                formControlName="isLive"
+                class="checkbox-input"
+                [disabled]="isSaving()"
+              />
+              <span>Make this banner live immediately</span>
+            </label>
+          </div>
+
+        </form>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="onClose()" [disabled]="isSaving()">
+        Cancel
+      </button>
+      <button
+        class="btn-save"
+        (click)="onSave()"
+        [disabled]="isSaving() || !form()?.valid || !selectedFile()"
+      >
+        @if (isSaving()) {
+          <span class="material-symbols-outlined spinning">progress_activity</span>
+          Creating...
+        } @else {
+          Create Banner
+        }
+      </button>
+    </div>
+
+  </div>
+</div>
